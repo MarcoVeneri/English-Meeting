@@ -3,183 +3,494 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#f4f6fb" media="(prefers-color-scheme:light)">
-<meta name="theme-color" content="#090b10" media="(prefers-color-scheme:dark)">
-<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#0b0d11">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="English Meeting">
+<meta name="apple-mobile-web-app-title" content="English Drive">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./icon.svg" type="image/svg+xml">
-<title>English Meeting</title>
+<link rel="apple-touch-icon" href="./icon.svg">
+<title>English Drive</title>
 <style>
-:root{--bg:#f3f5f9;--card:rgba(255,255,255,.78);--solid:#fff;--text:#101524;--muted:#727c8e;--line:rgba(30,45,70,.12);--blue:#3478f6;--green:#1eaa67;--orange:#f29132;--red:#e6534d;--shadow:0 18px 50px rgba(30,42,66,.11)}
-@media(prefers-color-scheme:dark){:root{--bg:#090b10;--card:rgba(26,30,39,.80);--solid:#171b22;--text:#f6f8fb;--muted:#9da7b8;--line:rgba(255,255,255,.12);--blue:#5b9bff;--shadow:0 22px 55px rgba(0,0,0,.32)}}
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:radial-gradient(circle at 85% -6%,rgba(91,155,255,.15),transparent 31%),var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}body{min-height:100dvh}button,input{font:inherit;color:inherit}.app{width:min(100%,720px);margin:auto;padding:max(16px,env(safe-area-inset-top)) 14px max(24px,env(safe-area-inset-bottom))}
-header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin:4px 3px 14px}.eyebrow{font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--muted)}h1{font-size:38px;line-height:.96;letter-spacing:-.05em;margin:5px 0 7px}.sub{font-size:12px;color:var(--muted);line-height:1.35}.streak{min-width:60px;text-align:center;border:1px solid var(--line);background:var(--card);border-radius:18px;padding:9px}.streak b{display:block;font-size:20px}.streak span{font-size:9px;color:var(--muted)}
-.card{background:var(--card);border:1px solid var(--line);border-radius:25px;padding:16px;box-shadow:var(--shadow);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);margin-bottom:11px}.title{font-size:17px;font-weight:850;letter-spacing:-.02em}.tiny{font-size:10px;color:var(--muted);line-height:1.4;margin-top:3px}
-.scenarios{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.scenario{border:1.5px solid var(--line);background:rgba(127,127,127,.04);border-radius:18px;padding:12px;text-align:left;min-height:90px}.scenario.on{border-color:var(--blue);background:rgba(52,120,246,.10)}.scenarioIcon{font-size:22px}.scenario b{display:block;font-size:12px;margin-top:7px}.scenario span{display:block;font-size:9px;color:var(--muted);margin-top:3px}
-.controls{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.seg{display:flex;border:1px solid var(--line);border-radius:14px;padding:3px;background:rgba(127,127,127,.04)}.seg button{flex:1;border:0;background:transparent;border-radius:10px;min-height:35px;font-size:10px;font-weight:800}.seg button.on{background:var(--solid);box-shadow:0 2px 9px rgba(0,0,0,.08);color:var(--blue)}
-.meeting{overflow:hidden;position:relative}.meetingTop{display:flex;align-items:center;justify-content:space-between;gap:10px}.status{font-size:9px;font-weight:850;padding:6px 8px;border-radius:999px;background:rgba(52,120,246,.1);color:var(--blue)}.status.ok{background:rgba(30,170,103,.11);color:var(--green)}.status.warn{background:rgba(242,145,50,.12);color:var(--orange)}
-.avatar{width:58px;height:58px;border-radius:19px;background:linear-gradient(145deg,#5b9bff,#6d5cf5);display:grid;place-items:center;color:white;font-size:24px;font-weight:900;box-shadow:0 15px 35px rgba(70,100,220,.22);margin-top:14px}.speaker{font-size:10px;color:var(--muted);font-weight:800;margin-top:10px}.prompt{font-size:25px;line-height:1.16;font-weight:850;letter-spacing:-.035em;margin-top:5px;min-height:88px}.hint{display:none;border-top:1px solid var(--line);margin-top:12px;padding-top:11px}.hint.show{display:block}.hintIt{font-size:11px;color:var(--muted)}.example{margin-top:7px;font-size:12px;font-weight:700}.meetingActions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-top:14px}.meetingActions button{min-height:44px;border-radius:14px;border:1px solid var(--line);background:rgba(127,127,127,.04);font-size:11px;font-weight:800}.meetingActions .main{background:var(--blue);color:white;border-color:transparent}
-.you{margin-top:12px;padding:12px;border-radius:17px;border:1px solid var(--line);background:rgba(127,127,127,.04);display:none}.you.show{display:block}.youLabel{font-size:9px;font-weight:850;color:var(--muted)}.transcript{font-size:15px;font-weight:760;line-height:1.35;margin-top:4px}.understood{font-size:10px;font-weight:850;margin-top:7px;color:var(--green)}.understood.bad{color:var(--red)}
-.micWrap{display:flex;justify-content:center;margin:18px 0 5px}.mic{width:92px;height:92px;border-radius:50%;border:0;background:var(--blue);color:white;font-size:34px;box-shadow:0 18px 45px rgba(52,120,246,.35);position:relative}.mic.listening{animation:pulse 1.25s infinite}.mic:disabled{opacity:.45}@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(52,120,246,.28),0 18px 45px rgba(52,120,246,.35)}50%{box-shadow:0 0 0 18px rgba(52,120,246,0),0 18px 45px rgba(52,120,246,.35)}}.micText{text-align:center;font-size:11px;color:var(--muted);min-height:16px}
-.fallback{display:none;margin-top:12px}.fallback.show{display:flex;gap:7px}.fallback input{flex:1;min-width:0;border:1px solid var(--line);background:rgba(127,127,127,.05);border-radius:13px;padding:11px}.fallback button{border:0;background:var(--blue);color:white;border-radius:13px;padding:0 14px;font-weight:800}
-.start{width:100%;min-height:52px;border:0;background:var(--text);color:var(--solid);border-radius:17px;font-weight:850;margin-top:13px}.progress{display:flex;align-items:center;gap:8px;margin-top:11px}.bar{height:6px;border-radius:999px;background:rgba(127,127,127,.12);overflow:hidden;flex:1}.fill{height:100%;width:0;background:var(--green);transition:width .3s}.progText{font-size:9px;color:var(--muted);min-width:34px;text-align:right}
-.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.stat{text-align:center;border:1px solid var(--line);border-radius:16px;padding:10px}.stat b{display:block;font-size:20px}.stat span{font-size:9px;color:var(--muted)}.rule{font-size:11px;line-height:1.45;color:var(--muted);margin-top:10px}.rule strong{color:var(--text)}
-@media(max-width:390px){h1{font-size:33px}.prompt{font-size:22px}.scenarios{grid-template-columns:1fr}.controls{grid-template-columns:1fr}.card{border-radius:21px;padding:14px}}
+:root{
+  color-scheme:light dark;
+  --bg:#f4f5f7;--card:rgba(255,255,255,.86);--card2:#fff;--text:#111318;--muted:#6d727c;
+  --line:rgba(17,19,24,.08);--accent:#2563eb;--accent2:#60a5fa;--shadow:0 18px 55px rgba(14,18,27,.10);
+  --good:#179b58;
+}
+@media(prefers-color-scheme:dark){
+  :root{--bg:#090b0f;--card:rgba(18,21,28,.88);--card2:#12151c;--text:#f4f7fb;--muted:#969ca8;
+  --line:rgba(255,255,255,.08);--accent:#4f8cff;--accent2:#7cb0ff;--shadow:0 22px 70px rgba(0,0,0,.35);--good:#47c982}
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
+body{min-height:100vh;min-height:100dvh;background:
+radial-gradient(circle at 50% -10%,rgba(79,140,255,.20),transparent 34%),var(--bg)}
+button{font:inherit}
+.app{width:min(720px,100%);min-height:100dvh;margin:auto;padding:max(18px,env(safe-area-inset-top)) 18px calc(24px + env(safe-area-inset-bottom))}
+.top{display:flex;align-items:center;justify-content:space-between;padding:6px 2px 18px}
+.brand{font-weight:850;letter-spacing:-.035em;font-size:22px}
+.badge{font-size:12px;font-weight:750;color:var(--muted);background:var(--card);border:1px solid var(--line);padding:7px 10px;border-radius:999px;backdrop-filter:blur(18px)}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:30px;padding:24px;box-shadow:var(--shadow);backdrop-filter:blur(22px);overflow:hidden;position:relative}
+.hero:after{content:"";position:absolute;width:210px;height:210px;border-radius:50%;right:-90px;top:-100px;background:radial-gradient(circle,rgba(79,140,255,.24),transparent 68%);pointer-events:none}
+.eyebrow{font-size:13px;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:.07em}
+h1{font-size:36px;line-height:1.02;letter-spacing:-.045em;margin:8px 0 9px}
+.sub{font-size:16px;line-height:1.4;color:var(--muted);max-width:520px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;background:var(--line);padding:5px;border-radius:17px;margin:22px 0 18px}
+.tab{border:0;border-radius:13px;padding:12px 10px;font-weight:800;background:transparent;color:var(--muted)}
+.tab.active{background:var(--card2);color:var(--text);box-shadow:0 4px 14px rgba(0,0,0,.07)}
+.start{width:100%;border:0;border-radius:22px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;padding:20px 18px;font-size:21px;font-weight:850;box-shadow:0 12px 30px rgba(37,99,235,.26);display:flex;align-items:center;justify-content:center;gap:10px}
+.start:active{transform:scale(.985)}
+.meta{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+.mini{padding:14px 10px;border:1px solid var(--line);border-radius:17px;background:rgba(127,127,127,.035);text-align:center}
+.mini strong{display:block;font-size:17px}.mini span{font-size:11px;color:var(--muted);font-weight:700}
+.section{margin-top:18px;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:18px;backdrop-filter:blur(18px)}
+.section-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.section-title strong{font-size:15px}.section-title span{font-size:12px;color:var(--muted)}
+.plan{display:grid;gap:9px}
+.planrow{display:grid;grid-template-columns:42px 1fr auto;gap:11px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.planrow:last-child{border:0}
+.dot{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:rgba(79,140,255,.11);font-weight:850;color:var(--accent)}
+.planrow b{font-size:14px}.planrow small{display:block;color:var(--muted);margin-top:2px}.mins{font-size:12px;font-weight:800;color:var(--muted)}
+.foot{font-size:12px;line-height:1.45;color:var(--muted);text-align:center;padding:18px 14px 0}
+.player{position:fixed;inset:0;background:var(--bg);z-index:20;display:none;overflow:auto}
+.player.open{display:block}
+.player-inner{width:min(720px,100%);min-height:100dvh;margin:auto;padding:max(18px,env(safe-area-inset-top)) 20px calc(28px + env(safe-area-inset-bottom));display:flex;flex-direction:column}
+.player-top{display:flex;justify-content:space-between;align-items:center}
+.close,.textbtn{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:999px;padding:10px 14px;font-weight:750}
+.now{margin-top:28px;color:var(--accent);font-weight:850;font-size:13px;text-transform:uppercase;letter-spacing:.07em}
+.player h2{font-size:32px;line-height:1.05;letter-spacing:-.04em;margin:8px 0}
+.segment{color:var(--muted);font-size:15px}
+.ring-wrap{display:grid;place-items:center;margin:34px 0 24px;position:relative}
+.ring{width:min(260px,70vw);aspect-ratio:1;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--accent) var(--p,0%),var(--line) 0);position:relative}
+.ring:after{content:"";position:absolute;inset:12px;border-radius:50%;background:var(--bg)}
+.clock{position:relative;z-index:1;text-align:center}.clock b{display:block;font-size:44px;letter-spacing:-.045em}.clock span{color:var(--muted);font-size:12px;font-weight:750}
+.transcript{min-height:104px;padding:18px;background:var(--card);border:1px solid var(--line);border-radius:20px;display:none;align-items:center;justify-content:center;text-align:center;line-height:1.45;font-size:18px}
+.transcript.show{display:flex}
+.controls{display:grid;grid-template-columns:1fr 1.35fr 1fr;gap:14px;align-items:center;margin-top:auto;padding-top:30px}
+.ctrl{height:66px;border:1px solid var(--line);border-radius:22px;background:var(--card);color:var(--text);font-size:20px;font-weight:850}
+.ctrl.main{height:78px;background:var(--text);color:var(--bg);font-size:30px}
+.repeat{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:16px;color:var(--muted);font-weight:750;font-size:13px}
+.repeat button{border:0;background:none;color:var(--accent);font-weight:850}
+.statusbar{height:5px;background:var(--line);border-radius:999px;overflow:hidden;margin-top:18px}
+.statusbar i{display:block;height:100%;width:0;background:var(--accent);border-radius:999px}
+.done{display:none;text-align:center;margin:auto 0}.done.show{display:block}.done .check{font-size:70px}.done h2{font-size:34px}.done p{color:var(--muted);line-height:1.45}.done button{margin-top:18px}
+@media(max-width:430px){h1{font-size:32px}.hero{padding:21px}.player h2{font-size:29px}.clock b{font-size:40px}}
 </style>
 </head>
 <body>
-<main class="app">
-<header><div><div class="eyebrow">SPEAKING · WORK MEETINGS</div><h1>English Meeting</h1><div class="sub">Parla per farti capire. Niente lezione di grammatica mentre stai parlando.</div></div><div class="streak"><b id="doneTop">0</b><span>SESSIONI</span></div></header>
+<div class="app" id="home">
+  <div class="top"><div class="brand">English Drive</div><div class="badge" id="levelBadge">A2 → B1</div></div>
 
-<section class="card">
-<div class="title">Scegli la situazione</div><div class="tiny">Scenari reali da call con colleghi e clienti.</div>
-<div id="scenarios" class="scenarios"></div>
-<div class="controls">
- <div><div class="tiny">ACCENTO</div><div class="seg" id="accent"><button data-v="en-GB" class="on">UK</button><button data-v="en-US">USA</button></div></div>
- <div><div class="tiny">VELOCITÀ</div><div class="seg" id="speed"><button data-v="slow" class="on">Slow</button><button data-v="real">Real</button></div></div>
+  <main class="hero">
+    <div class="eyebrow" id="dayLabel">GIORNO 1 DI 30</div>
+    <h1 id="topicTitle">Opening a meeting</h1>
+    <div class="sub" id="topicFocus">Allena l'orecchio con inglese da riunione, accento UK e USA. Non devi capire tutto.</div>
+
+    <div class="tabs">
+      <button class="tab active" id="morningTab" onclick="selectSession('morning')">☀️ Mattina · 60 min</button>
+      <button class="tab" id="eveningTab" onclick="selectSession('evening')">🌙 Sera · 60 min</button>
+    </div>
+
+    <button class="start" id="startBtn" onclick="startSession()">▶ <span>START · 60 MIN</span></button>
+
+    <div class="meta">
+      <div class="mini"><strong id="doneToday">0/2</strong><span>SESSIONI OGGI</span></div>
+      <div class="mini"><strong id="rateText">0.86×</strong><span>VELOCITÀ</span></div>
+      <div class="mini"><strong id="progressText">0%</strong><span>PERCORSO</span></div>
+    </div>
+  </main>
+
+  <section class="section">
+    <div class="section-title"><strong id="planTitle">Sessione mattina</strong><span>un solo tap e poi va da sola</span></div>
+    <div class="plan" id="plan"></div>
+  </section>
+  <div class="foot">Ascolta senza tradurre parola per parola. Se perdi una frase, continua. L'obiettivo è riconoscere sempre più suoni, parole e blocchi di frase.</div>
 </div>
-<button id="startBtn" class="start">Start meeting</button>
-</section>
 
-<section class="card meeting">
-<div class="meetingTop"><div><div class="title" id="meetingTitle">Ready</div><div class="tiny" id="meetingRole">Seleziona uno scenario e inizia.</div></div><div id="status" class="status">OFF</div></div>
-<div class="avatar">A</div><div class="speaker">COLLEAGUE / CLIENT</div><div id="prompt" class="prompt">Press “Start meeting” when you are ready.</div>
-<div id="hint" class="hint"><div id="hintIt" class="hintIt"></div><div id="example" class="example"></div></div>
-<div class="meetingActions"><button id="repeat">↻ Repeat</button><button id="slower">🐢 Slower</button><button id="help">? Help</button></div>
-<div id="you" class="you"><div class="youLabel">WHAT I HEARD</div><div id="transcript" class="transcript"></div><div id="understood" class="understood"></div></div>
-<div class="micWrap"><button id="mic" class="mic" disabled aria-label="Parla">🎙️</button></div><div id="micText" class="micText">Il microfono si attiva durante la sessione.</div>
-<div id="fallback" class="fallback"><input id="typed" placeholder="Scrivi la risposta se il microfono non è disponibile"><button id="sendTyped">Invia</button></div>
-<div class="progress"><div class="bar"><div id="fill" class="fill"></div></div><div id="progText" class="progText">0/0</div></div>
-</section>
+<div class="player" id="player">
+  <div class="player-inner">
+    <div id="playArea">
+      <div class="player-top">
+        <button class="close" onclick="stopAndClose()">✕ Chiudi</button>
+        <button class="textbtn" onclick="toggleTranscript()">Testo</button>
+      </div>
+      <div class="now" id="nowLabel">BUSINESS ENGLISH</div>
+      <h2 id="playTopic">Opening a meeting</h2>
+      <div class="segment" id="segmentLabel">Meeting English · 36 min</div>
 
-<section class="card">
-<div class="title">La regola</div>
-<div class="rule"><strong>Se il sistema capisce quello che dici, non ti corregge.</strong> Va avanti con la riunione. Ti ferma solo quando il riconoscimento non riesce a capire abbastanza bene la risposta.</div>
-<div class="stats" style="margin-top:13px"><div class="stat"><b id="sessions">0</b><span>SESSIONI</span></div><div class="stat"><b id="repeats">0</b><span>RIPETIZIONI</span></div><div class="stat"><b id="understoodPct">—</b><span>COMPRESO</span></div></div>
-<div class="tiny" style="margin-top:10px">Nessun account o chiave API da configurare. Usa le funzioni vocali disponibili nel browser del dispositivo.</div>
-</section>
-</main>
+      <div class="ring-wrap">
+        <div class="ring" id="ring">
+          <div class="clock"><b id="clock">60:00</b><span id="clockLabel">TEMPO RIMANENTE</span></div>
+        </div>
+      </div>
+
+      <div class="transcript" id="transcript"></div>
+
+      <div class="statusbar"><i id="segmentProgress"></i></div>
+
+      <div class="controls">
+        <button class="ctrl" onclick="jump(-3)">↶ 15</button>
+        <button class="ctrl main" id="pauseBtn" onclick="togglePause()">Ⅱ</button>
+        <button class="ctrl" onclick="jump(3)">15 ↷</button>
+      </div>
+      <div class="repeat"><span>Ripetizione frase</span><button id="repeatBtn" onclick="toggleRepeat()">OFF</button></div>
+    </div>
+
+    <div class="done" id="doneArea">
+      <div class="check">✓</div>
+      <h2>Sessione completata</h2>
+      <p id="doneMsg">Hai fatto un'ora di ascolto. Non importa quanto hai capito: hai allenato l'orecchio.</p>
+      <button class="start" onclick="finishAndClose()">TORNA ALLA HOME</button>
+    </div>
+  </div>
+</div>
+
 <script>
-(function(){
-"use strict";
-var SCENARIOS=[
- {id:"standup",icon:"☕",name:"Daily stand-up",desc:"Aggiornamento rapido al team",role:"Internal team · daily call",turns:[
-  ["Good morning. Can you give me a quick update on what you are working on today?","Dimmi brevemente su cosa stai lavorando oggi.","Today I am working on the project plan and I have two calls with the client."],
-  ["Thanks. Is there anything blocking you or your team at the moment?","Ti chiede se ci sono blocchi o problemi.","At the moment, there are no major blockers. We only need one confirmation from the client."],
-  ["What is the most important thing you need to complete today?","Qual è la priorità di oggi?","The main priority is to close the open actions and prepare the next meeting."],
-  ["Perfect. Do you need any support from me?","Ti chiede se hai bisogno di supporto.","Not right now, thank you. I will let you know if something changes."]
- ]},
- {id:"client",icon:"🤝",name:"Client status",desc:"Stato progetto con il cliente",role:"Client meeting · status update",turns:[
-  ["Hi Marco. Can you give us a short update on the project status?","Fai un aggiornamento breve del progetto.","The project is on track. We completed the planned activities and we are preparing the next milestone."],
-  ["What have you completed since our last meeting?","Cosa avete completato dall'ultima riunione?","Since the last meeting, we completed the analysis and shared the first results with the team."],
-  ["Are there any risks or issues we should know about?","Ci sono rischi o problemi?","There is one small risk related to the timeline, but we are managing it with the technical team."],
-  ["What do you need from us before the next meeting?","Che cosa ti serve dal cliente?","We need your confirmation on the document and the availability of the key users."]
- ]},
- {id:"issue",icon:"⚠️",name:"Problem / delay",desc:"Spiegare un problema senza bloccarsi",role:"Escalation call · project issue",turns:[
-  ["Marco, we have a delay on the deliverable. Can you explain what happened?","Spiega perché c'è stato un ritardo.","The delay is due to a dependency that was not available on time. The team is already working on a recovery plan."],
-  ["How much impact do you expect on the project timeline?","Quanto impatta sulla pianificazione?","At the moment, we expect a small impact of a few days, but we are checking all the options."],
-  ["What are you doing to recover the delay?","Come recuperate il ritardo?","We are changing the priorities and adding support to the critical activities."],
-  ["When can you give us a confirmed new date?","Quando puoi dare una nuova data confermata?","I can give you a confirmed date after the technical review tomorrow."]
- ]},
- {id:"kickoff",icon:"🚀",name:"Kick-off",desc:"Presentarti e spiegare il ruolo",role:"Kick-off · new project",turns:[
-  ["Before we start, could you introduce yourself and explain your role?","Presentati e spiega il tuo ruolo.","My name is Marco. I am a Delivery Lead and I manage delivery activities for public sector and health projects."],
-  ["What will you be responsible for on this project?","Quali saranno le tue responsabilità?","I will coordinate the team, monitor delivery, manage risks and keep the client aligned."],
-  ["How would you like the team to communicate with you?","Come vuoi che il team comunichi con te?","I prefer clear and direct communication, especially when there is a risk or a blocker."],
-  ["Great. What are your priorities for the first weeks?","Quali sono le priorità iniziali?","My first priorities are to understand the scope, meet the team and confirm the delivery plan."]
- ]},
- {id:"team",icon:"👥",name:"Team management",desc:"Persone, priorità e performance",role:"Management call · team discussion",turns:[
-  ["How large is your team at the moment?","Quante persone gestisci?","At the moment, I manage eleven people."],
-  ["What are the main priorities for your team this week?","Quali sono le priorità del team?","The main priorities are client delivery, closing open actions and preparing the next milestones."],
-  ["How do you handle a team member who is struggling with a task?","Come gestisci una persona in difficoltà?","First I try to understand the problem. Then I give support and agree on a clear action plan."],
-  ["How do you keep everyone aligned?","Come mantieni tutti allineati?","I use short meetings, clear responsibilities and regular follow-ups."]
- ]},
- {id:"unexpected",icon:"🎯",name:"Unexpected questions",desc:"Domande che non hai preparato",role:"International call · spontaneous Q&A",turns:[
-  ["What is the biggest challenge in your role right now?","Qual è la difficoltà principale nel tuo ruolo?","The biggest challenge right now is working in English with international colleagues and clients."],
-  ["What would you change if you could improve one thing in the project?","Cosa miglioreresti nel progetto?","I would improve the communication between teams and make decisions faster."],
-  ["Can you give me an example of a difficult situation you managed?","Fai un esempio di situazione difficile.","In my previous role, I managed a project with a tight deadline and several stakeholders."],
-  ["Why do you think your approach worked?","Perché il tuo approccio ha funzionato?","Because I kept the team focused, communicated clearly and addressed problems early."]
- ]}
+const topics = [
+["Introductions & role","Presentarti, spiegare il tuo ruolo e il tuo team"],
+["Opening a meeting","Aprire una call e mettere tutti a proprio agio"],
+["Agenda & objectives","Spiegare agenda e obiettivi della riunione"],
+["Status updates","Dare un aggiornamento breve e chiaro"],
+["Priorities","Parlare di priorità e attività più urgenti"],
+["Clarification","Chiedere di ripetere o chiarire senza bloccarti"],
+["Interrupting politely","Entrare nella conversazione in modo naturale"],
+["Deadlines","Parlare di date, scadenze e ritardi"],
+["Risks & issues","Descrivere rischi, problemi e impatti"],
+["Dependencies","Spiegare dipendenze tra team e attività"],
+["Team workload","Parlare di carico di lavoro e capacità del team"],
+["Delegation","Assegnare attività e verificare la comprensione"],
+["Client requests","Gestire richieste e aspettative del cliente"],
+["Scope changes","Parlare di cambi di perimetro"],
+["Escalations","Portare un problema al livello giusto"],
+["Decisions","Confermare decisioni e motivazioni"],
+["Actions & ownership","Definire chi fa cosa e per quando"],
+["Progress review","Rivedere avanzamento e punti aperti"],
+["Quality & testing","Parlare di qualità, test e criteri di accettazione"],
+["Problem solving","Analizzare un problema e proporre opzioni"],
+["Negotiation","Negoziare priorità, tempi e compromessi"],
+["Difficult conversations","Gestire disaccordi in modo professionale"],
+["Numbers & performance","Presentare numeri, trend e risultati"],
+["Next steps","Chiudere una riunione con i prossimi passi"],
+["Remote collaboration","Collaborare bene con team distribuiti"],
+["Stakeholder alignment","Allineare persone con esigenze diverse"],
+["Steering committee","Aggiornare management e stakeholder senior"],
+["Delivery confidence","Parlare di piano, rischi e fiducia nella delivery"],
+["Full project update","Simulare un aggiornamento completo di progetto"],
+["Full meeting simulation","Seguire una riunione completa UK/USA"]
 ];
-var settings=load("english.settings",{scenario:"standup",accent:"en-GB",speed:"slow"});
-var stats=load("english.stats",{sessions:0,repeats:0,ok:0,total:0});
-var active=null,turn=0,running=false,recognition=null,lastPrompt="",sessionStart=0;
-function $(s){return document.querySelector(s)}
-function $$(s){return Array.from(document.querySelectorAll(s))}
-function load(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}}
-function save(){localStorage.setItem("english.settings",JSON.stringify(settings));localStorage.setItem("english.stats",JSON.stringify(stats))}
-function renderScenarios(){
- $("#scenarios").innerHTML=SCENARIOS.map(function(s){return '<button class="scenario '+(s.id===settings.scenario?'on':'')+'" data-id="'+s.id+'"><div class="scenarioIcon">'+s.icon+'</div><b>'+s.name+'</b><span>'+s.desc+'</span></button>'}).join("");
+
+const businessCore = [
+"Good morning everyone. Thanks for joining.",
+"Before we start, can everyone hear me clearly?",
+"The main objective today is to review the current status and agree on the next steps.",
+"I'll keep the update short and focus on the most important points.",
+"At the moment, the team is progressing as planned.",
+"We have one open issue that needs attention.",
+"The main risk is related to timing and dependency on another team.",
+"Could you clarify what you mean by that?",
+"Sorry to interrupt. Can I add one point?",
+"From my point of view, we should focus on the highest priority first.",
+"I agree with the general direction, but I have one concern.",
+"Can we confirm who owns this action?",
+"Could we agree on a target date?",
+"I'll check with my team and come back to you.",
+"We need to understand the impact before we make a decision.",
+"Let's separate the urgent issue from the longer-term improvement.",
+"Is there anything blocking the team right now?",
+"The client expects an update by the end of the week.",
+"We may need to adjust the plan if the dependency is delayed.",
+"Let's make sure we all have the same understanding.",
+"I'd like to summarize what we have agreed.",
+"The next step is to confirm the owner and the deadline.",
+"Please let me know if I have missed anything.",
+"Thanks everyone. I think we have a clear way forward."
+];
+
+const roleLines = [
+"I'm a Delivery Lead working in public sector and healthcare.",
+"I currently manage a team of eleven people.",
+"My role is to support the team, remove blockers and improve delivery performance.",
+"I often join calls with colleagues and clients in the UK and the US."
+];
+
+const ukBase = [
+"Right, shall we get started? I think the main thing today is to understand where we are and what still needs to be done.",
+"From our side, the work is moving forward, although there are a couple of points we need to clarify before Friday.",
+"If anything changes, please flag it as early as possible so that we can adjust the plan without creating unnecessary pressure.",
+"Before we wrap up, let's confirm the actions, the owners and the dates, just to make sure we're all aligned."
+];
+
+const usBase = [
+"Okay everyone, let's get started. I want to make sure we're clear on the goal for today's call.",
+"The team is making good progress, but there's one dependency that could affect the timeline if we don't address it soon.",
+"If you have a concern, please bring it up. It's better to discuss it now than discover it later in the project.",
+"Before we finish, let's recap the decisions and make sure every action has an owner and a due date."
+];
+
+const connectors = [
+"First of all","At the moment","In addition","However","For that reason","From our side",
+"To be clear","As a next step","In the short term","Before we move on"
+];
+
+let selected = "morning";
+let day = Math.max(1,Math.min(30,Number(localStorage.getItem("ed_day")||1)));
+let completed = JSON.parse(localStorage.getItem("ed_completed")||"{}");
+let running=false, paused=false, repeat=false, queueIndex=0, segIndex=0;
+let sessionElapsed=0, segmentElapsed=0, ticker=null, currentItems=[], utterance=null, wakeLock=null;
+let currentSegments=[];
+
+function todayKey(){return "d"+day}
+function rateForDay(){ return day<=7 ? .86 : day<=15 ? .91 : day<=23 ? .96 : 1.0; }
+function speechRate(){ return rateForDay(); }
+function levelForDay(){ return day<=10?"A2":day<=22?"A2+": "A2 → B1"; }
+
+function topic(){
+  const t=topics[day-1];
+  return {title:t[0],focus:t[1]};
 }
-function renderSettings(){
- $$("#accent button").forEach(function(b){b.classList.toggle("on",b.dataset.v===settings.accent)});
- $$("#speed button").forEach(function(b){b.classList.toggle("on",b.dataset.v===settings.speed)});
+
+function makeBusiness(){
+  const t=topic();
+  const extra = [
+    `Today's focus is ${t.title.toLowerCase()}.`,
+    `The key point for this meeting is ${t.focus.toLowerCase()}.`,
+    `${connectors[day%connectors.length]}, we need to keep the message simple and clear.`,
+    "If I don't understand something, I can ask the speaker to repeat it more slowly.",
+    "Could you say that again, please?",
+    "Would you mind speaking a little more slowly?",
+    "Let me check that I understood correctly.",
+    "So, if I understand you correctly, this is the main priority."
+  ];
+  return [...roleLines,...businessCore,...extra];
 }
-function renderStats(){
- $("#doneTop").textContent=stats.sessions;$("#sessions").textContent=stats.sessions;$("#repeats").textContent=stats.repeats;
- $("#understoodPct").textContent=stats.total?Math.round(stats.ok/stats.total*100)+"%":"—";save();
+
+function makeUK(){
+  const t=topic();
+  return [
+    ...ukBase,
+    `Today we're focusing on ${t.title.toLowerCase()}. The aim is not to make things complicated; it's to make sure everybody understands what happens next.`,
+    "If you're not sure about a point, just say so. Asking for clarification is completely normal in an international meeting.",
+    "We can take the detail offline if necessary, but for now let's agree on the decision we need from this call.",
+    "There may be different views around the table, so let's hear them and then decide how we want to move forward."
+  ];
 }
-function scenario(){return SCENARIOS.find(function(s){return s.id===settings.scenario})||SCENARIOS[0]}
-function voices(){return window.speechSynthesis?window.speechSynthesis.getVoices():[]}
-function pickVoice(){
- var v=voices();var exact=v.find(function(x){return x.lang===settings.accent});if(exact)return exact;
- return v.find(function(x){return x.lang&&x.lang.toLowerCase().indexOf(settings.accent.substring(0,2).toLowerCase())===0})||null;
+
+function makeUS(){
+  const t=topic();
+  return [
+    ...usBase,
+    `For today's practice, the main topic is ${t.title.toLowerCase()}. Listen for the key words and don't worry about every single word.`,
+    "Here's the bottom line: we need a clear owner, a realistic timeline, and early visibility of any risk.",
+    "If something isn't clear, jump in and ask. That's much better than leaving the call with the wrong understanding.",
+    "Let's keep the conversation practical. What do we know, what do we need, and what's the next action?"
+  ];
 }
-function speak(text,forceSlow){
- if(!window.speechSynthesis)return;
- speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(text);u.lang=settings.accent;var v=pickVoice();if(v)u.voice=v;
- u.rate=forceSlow?0.68:(settings.speed==="slow"?0.80:1.0);u.pitch=1;lastPrompt=text;speechSynthesis.speak(u);
+
+function morningSegments(){
+  return [
+    {name:"Business English",lang:"en-US",mins:36,items:makeBusiness(),note:"Meeting English · lavoro, team e delivery"},
+    {name:"UK Listening",lang:"en-GB",mins:12,items:makeUK(),note:"Accento britannico · ritmo naturale"},
+    {name:"US Listening",lang:"en-US",mins:12,items:makeUS(),note:"Accento americano · ritmo naturale"}
+  ];
 }
-function currentTurn(){return active&&active.turns[turn]}
-function renderTurn(){
- var t=currentTurn();if(!t){finish();return}
- $("#meetingTitle").textContent=active.name;$("#meetingRole").textContent=active.role;$("#prompt").textContent=t[0];$("#hintIt").textContent="🇮🇹 "+t[1];$("#example").textContent="Example: “"+t[2]+"”";$("#hint").classList.remove("show");$("#you").classList.remove("show");$("#status").textContent="LISTEN";$("#status").className="status";
- $("#fill").style.width=Math.round(turn/active.turns.length*100)+"%";$("#progText").textContent=(turn+1)+"/"+active.turns.length;$("#mic").disabled=false;$("#micText").textContent="Ascolta la domanda, poi premi il microfono.";speak(t[0],false);
+function eveningSegments(){
+  return [
+    {name:"Morning Review",lang:"en-US",mins:30,items:[...makeBusiness().slice(0,18),...makeUK().slice(0,3),...makeUS().slice(0,3)],note:"Riascolto · consolida ciò che hai sentito"},
+    {name:"Easy Listening",lang:"en-GB",mins:15,items:["Listen and follow the meaning, not every word.","You do not need to translate. Just notice the sounds and the rhythm.",...makeUK()],note:"Ascolto più facile · UK"},
+    {name:"Immersion",lang:"en-US",mins:15,items:[...makeUS(),...businessCore.slice(8,20)],note:"Immersione · USA e meeting reali"}
+  ];
 }
-function start(){
- active=scenario();turn=0;running=true;sessionStart=Date.now();$("#startBtn").textContent="Restart meeting";$("#mic").disabled=false;setupRecognition();renderTurn();
+
+function render(){
+  const t=topic();
+  document.getElementById("dayLabel").textContent=`GIORNO ${day} DI 30`;
+  document.getElementById("topicTitle").textContent=t.title;
+  document.getElementById("topicFocus").textContent=t.focus+". Non devi capire tutto: ascolta e continua.";
+  document.getElementById("levelBadge").textContent=levelForDay();
+  document.getElementById("rateText").textContent=rateForDay().toFixed(2)+"×";
+  document.getElementById("progressText").textContent=Math.round(((day-1)/30)*100)+"%";
+  const c=completed[todayKey()]||{};
+  document.getElementById("doneToday").textContent=(Number(!!c.morning)+Number(!!c.evening))+"/2";
+  selectSession(selected,false);
 }
-function finish(){
- running=false;stats.sessions++;renderStats();$("#status").textContent="DONE";$("#status").className="status ok";$("#prompt").textContent="Good job. The meeting is finished.";$("#meetingRole").textContent="Session completed";$("#mic").disabled=true;$("#micText").textContent="Sessione completata. Puoi iniziarne un'altra.";$("#fill").style.width="100%";$("#progText").textContent=active.turns.length+"/"+active.turns.length;speak("Good job. The meeting is finished.",false);
+
+function selectSession(type,rerender=true){
+  selected=type;
+  document.getElementById("morningTab").classList.toggle("active",type==="morning");
+  document.getElementById("eveningTab").classList.toggle("active",type==="evening");
+  const segs= type==="morning" ? morningSegments() : eveningSegments();
+  document.getElementById("planTitle").textContent=type==="morning"?"Sessione mattina":"Sessione sera";
+  document.getElementById("plan").innerHTML=segs.map((s,i)=>`
+    <div class="planrow"><div class="dot">${i+1}</div><div><b>${s.name}</b><small>${s.note}</small></div><div class="mins">${s.mins} min</div></div>`).join("");
+  const c=completed[todayKey()]||{};
+  const done=!!c[type];
+  document.querySelector("#startBtn span").textContent=done?"RIASCOLTA · 60 MIN":"START · 60 MIN";
 }
-function understood(text,confidence){
- var words=String(text||"").trim().split(/\s+/).filter(Boolean);
- if(words.length<2)return false;if(confidence&&confidence>0&&confidence<0.28)return false;return true;
+
+function preferredVoice(lang){
+  const voices=speechSynthesis.getVoices();
+  const same=voices.filter(v=>v.lang && v.lang.toLowerCase().startsWith(lang.toLowerCase()));
+  const preferred=["Siri","Daniel","Samantha","Karen","Moira","Alex","Microsoft","Google"];
+  for(const p of preferred){const v=same.find(x=>x.name.includes(p)); if(v)return v;}
+  return same[0]||voices.find(v=>v.lang&&v.lang.toLowerCase().startsWith(lang.slice(0,2)))||null;
 }
-function handleAnswer(text,confidence){
- $("#you").classList.add("show");$("#transcript").textContent=text||"—";stats.total++;
- if(understood(text,confidence)){
-   stats.ok++;$("#understood").textContent="✓ Capito. La conversazione continua.";$("#understood").className="understood";$("#status").textContent="UNDERSTOOD";$("#status").className="status ok";renderStats();
-   setTimeout(function(){turn++;renderTurn()},900);
- }else{
-   $("#understood").textContent="Non ho capito abbastanza bene. Ripeti più lentamente.";$("#understood").className="understood bad";$("#status").textContent="REPEAT";$("#status").className="status warn";$("#micText").textContent="Ripeti la risposta. Nessuna correzione grammaticale.";renderStats();
-   speak("Sorry, I didn't catch that. Could you say it again, please?",true);
- }
+
+async function requestWakeLock(){
+  try{ if("wakeLock" in navigator) wakeLock=await navigator.wakeLock.request("screen"); }catch(e){}
 }
-function setupRecognition(){
- var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
- if(!SR){$("#fallback").classList.add("show");$("#mic").disabled=true;$("#micText").textContent="Riconoscimento vocale non disponibile qui: usa il campo di testo.";return}
- recognition=new SR();recognition.lang=settings.accent;recognition.continuous=false;recognition.interimResults=true;recognition.maxAlternatives=1;
- recognition.onstart=function(){$("#mic").classList.add("listening");$("#micText").textContent="Parla adesso…";$("#status").textContent="LISTENING";$("#status").className="status"};
- recognition.onresult=function(e){var r=e.results[e.results.length-1];$("#you").classList.add("show");$("#transcript").textContent=r[0].transcript;if(r.isFinal)handleAnswer(r[0].transcript,r[0].confidence)};
- recognition.onerror=function(e){$("#mic").classList.remove("listening");if(e.error!=="aborted"){$("#micText").textContent="Non ho ricevuto bene la voce. Premi e riprova.";$("#status").textContent="RETRY";$("#status").className="status warn"}};
- recognition.onend=function(){$("#mic").classList.remove("listening");if(running&&$("#status").textContent==="LISTENING")$("#micText").textContent="Premi di nuovo il microfono e riprova."};
+
+function startSession(){
+  if(!("speechSynthesis" in window)){
+    alert("Il browser non supporta la sintesi vocale. Apri la PWA con Safari su iPhone/iPad o Chrome.");
+    return;
+  }
+  speechSynthesis.cancel();
+  currentSegments=selected==="morning"?morningSegments():eveningSegments();
+  segIndex=0;queueIndex=0;sessionElapsed=0;segmentElapsed=0;running=true;paused=false;repeat=false;
+  document.getElementById("player").classList.add("open");
+  document.getElementById("playArea").style.display="block";
+  document.getElementById("doneArea").classList.remove("show");
+  document.getElementById("playTopic").textContent=topic().title;
+  document.getElementById("pauseBtn").textContent="Ⅱ";
+  document.getElementById("repeatBtn").textContent="OFF";
+  requestWakeLock();
+  updatePlayer();
+  if(ticker)clearInterval(ticker);
+  ticker=setInterval(()=>{
+    if(running && !paused){
+      sessionElapsed++;
+      segmentElapsed++;
+      updateClock();
+    }
+  },1000);
+  setTimeout(speakCurrent,220);
 }
-$("#scenarios").addEventListener("click",function(e){var b=e.target.closest(".scenario");if(!b)return;settings.scenario=b.dataset.id;renderScenarios();save()});
-$("#accent").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;settings.accent=b.dataset.v;renderSettings();if(recognition)recognition.lang=settings.accent;save()});
-$("#speed").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;settings.speed=b.dataset.v;renderSettings();save()});
-$("#startBtn").addEventListener("click",start);
-$("#repeat").addEventListener("click",function(){if(!lastPrompt)return;stats.repeats++;renderStats();speak(lastPrompt,false)});
-$("#slower").addEventListener("click",function(){if(!lastPrompt)return;stats.repeats++;renderStats();speak(lastPrompt,true)});
-$("#help").addEventListener("click",function(){$("#hint").classList.toggle("show")});
-$("#mic").addEventListener("click",function(){if(!running)return;if(!recognition)setupRecognition();if(recognition){try{recognition.stop()}catch(e){};setTimeout(function(){try{recognition.lang=settings.accent;recognition.start()}catch(e){}},120)}});
-$("#sendTyped").addEventListener("click",function(){var t=$("#typed").value.trim();if(t){$("#typed").value="";handleAnswer(t,1)}});
-$("#typed").addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();$("#sendTyped").click()}});
-renderScenarios();renderSettings();renderStats();if(window.speechSynthesis){speechSynthesis.getVoices();window.speechSynthesis.onvoiceschanged=function(){voices()}}
-if(!(window.SpeechRecognition||window.webkitSpeechRecognition))$("#fallback").classList.add("show");
-if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("./sw.js").catch(function(){})});
-})();
+
+function speakCurrent(){
+  if(!running||paused)return;
+  const seg=currentSegments[segIndex];
+  currentItems=seg.items;
+  if(queueIndex>=currentItems.length)queueIndex=0;
+  const text=currentItems[queueIndex];
+  document.getElementById("transcript").textContent=text;
+  utterance=new SpeechSynthesisUtterance(text);
+  utterance.lang=seg.lang;
+  utterance.rate=speechRate();
+  utterance.pitch=1;
+  const v=preferredVoice(seg.lang); if(v)utterance.voice=v;
+  utterance.onend=()=>{
+    if(!running||paused)return;
+    const limit=seg.mins*60;
+    if(segmentElapsed>=limit){
+      segIndex++;
+      segmentElapsed=0;queueIndex=0;
+      if(segIndex>=currentSegments.length){completeSession();return;}
+      updatePlayer();
+      setTimeout(speakCurrent,180);
+      return;
+    }
+    if(!repeat)queueIndex=(queueIndex+1)%currentItems.length;
+    setTimeout(speakCurrent,150);
+  };
+  utterance.onerror=()=>{ if(running&&!paused){queueIndex=(queueIndex+1)%currentItems.length;setTimeout(speakCurrent,300)} };
+  speechSynthesis.speak(utterance);
+}
+
+function updatePlayer(){
+  const seg=currentSegments[segIndex];
+  document.getElementById("nowLabel").textContent=seg.name;
+  document.getElementById("segmentLabel").textContent=seg.note+" · "+seg.mins+" min";
+  updateClock();
+  if("mediaSession" in navigator){
+    try{
+      navigator.mediaSession.metadata=new MediaMetadata({title:topic().title,artist:"English Drive",album:selected==="morning"?"Morning Drive":"Evening Drive"});
+      navigator.mediaSession.setActionHandler("play",()=>{if(paused)togglePause()});
+      navigator.mediaSession.setActionHandler("pause",()=>{if(!paused)togglePause()});
+      navigator.mediaSession.setActionHandler("previoustrack",()=>jump(-3));
+      navigator.mediaSession.setActionHandler("nexttrack",()=>jump(3));
+    }catch(e){}
+  }
+}
+
+function updateClock(){
+  const total=3600;
+  const remain=Math.max(0,total-sessionElapsed);
+  const m=Math.floor(remain/60),s=remain%60;
+  document.getElementById("clock").textContent=String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+  const pct=Math.min(100,(sessionElapsed/total)*100);
+  document.getElementById("ring").style.setProperty("--p",pct+"%");
+  document.getElementById("segmentProgress").style.width=Math.min(100,(segmentElapsed/(currentSegments[segIndex].mins*60))*100)+"%";
+}
+
+function togglePause(){
+  if(!running)return;
+  if(paused){
+    paused=false;document.getElementById("pauseBtn").textContent="Ⅱ";
+    speechSynthesis.resume();
+    if(!speechSynthesis.speaking)setTimeout(speakCurrent,120);
+  }else{
+    paused=true;document.getElementById("pauseBtn").textContent="▶";
+    speechSynthesis.pause();
+  }
+}
+
+function jump(delta){
+  if(!running)return;
+  speechSynthesis.cancel();
+  const items=currentSegments[segIndex].items;
+  queueIndex=(queueIndex+delta)%items.length;if(queueIndex<0)queueIndex+=items.length;
+  if(!paused)setTimeout(speakCurrent,120);
+}
+
+function toggleRepeat(){
+  repeat=!repeat;
+  document.getElementById("repeatBtn").textContent=repeat?"ON":"OFF";
+}
+
+function toggleTranscript(){ document.getElementById("transcript").classList.toggle("show"); }
+
+function completeSession(){
+  running=false;paused=false;speechSynthesis.cancel();if(ticker)clearInterval(ticker);
+  if(wakeLock){try{wakeLock.release()}catch(e){}wakeLock=null}
+  completed[todayKey()]=completed[todayKey()]||{};
+  completed[todayKey()][selected]=true;
+  localStorage.setItem("ed_completed",JSON.stringify(completed));
+  document.getElementById("playArea").style.display="none";
+  document.getElementById("doneArea").classList.add("show");
+  document.getElementById("doneMsg").textContent=selected==="morning"
+    ?"Ottimo. Questa sera riascolterai una parte dello stesso materiale: è lì che l'orecchio comincia a riconoscere le frasi più velocemente."
+    :"Giornata completata. Hai fatto due ore di esposizione all'inglese. Domani il programma passa al tema successivo.";
+}
+
+function finishAndClose(){
+  const c=completed[todayKey()]||{};
+  if(c.morning&&c.evening&&day<30){
+    day++;
+    localStorage.setItem("ed_day",String(day));
+    selected="morning";
+  }
+  document.getElementById("player").classList.remove("open");
+  render();
+}
+
+function stopAndClose(){
+  if(running){
+    running=false;speechSynthesis.cancel();if(ticker)clearInterval(ticker);
+    if(wakeLock){try{wakeLock.release()}catch(e){}wakeLock=null}
+  }
+  document.getElementById("player").classList.remove("open");
+}
+
+function autoChoose(){
+  const c=completed[todayKey()]||{};
+  const h=new Date().getHours();
+  if(c.morning&&!c.evening)selected="evening";
+  else selected=h>=15?"evening":"morning";
+}
+speechSynthesis.onvoiceschanged=()=>{};
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&running&&!paused&&!speechSynthesis.speaking)setTimeout(speakCurrent,250)});
+autoChoose();render();
 </script>
-</body></html>
+</body>
+</html>
