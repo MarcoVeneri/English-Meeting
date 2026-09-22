@@ -28,7 +28,7 @@ h1{font-size:38px;line-height:1.02;letter-spacing:-.05em;margin:10px 0 8px}
 .auto{font-size:12px;font-weight:850;color:var(--blue);white-space:nowrap}
 .start{width:100%;border:0;border-radius:24px;padding:22px 18px;background:linear-gradient(135deg,#246bff,#66a1ff);color:#fff;font-size:23px;font-weight:900;box-shadow:0 12px 30px rgba(37,99,235,.28)}
 .start:active{transform:scale(.985)}
-.extra{width:100%;border:1px solid var(--line);border-radius:19px;padding:15px 16px;margin-top:11px;background:transparent;color:var(--text);font-size:15px;font-weight:850}.extra:active{transform:scale(.985)}
+.extra{width:100%;border:1px solid var(--line);border-radius:19px;padding:15px 16px;margin-top:11px;background:transparent;color:var(--text);font-size:15px;font-weight:850}.extra:active{transform:scale(.985)}\n.speed{margin-top:12px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.speed button{border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:14px;padding:10px 6px;font-size:13px;font-weight:800}.speed button.active{background:var(--text);color:var(--bg);border-color:var(--text)}
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
 .stat{border:1px solid var(--line);border-radius:17px;padding:13px;text-align:center}
 .stat b{display:block;font-size:17px}.stat span{font-size:11px;color:var(--muted);font-weight:800}
@@ -72,7 +72,7 @@ h1{font-size:38px;line-height:1.02;letter-spacing:-.05em;margin:10px 0 8px}
     </div>
 
     <button class="start" id="startBtn" onclick="startSession()">▶ START</button>
-    <button class="extra" onclick="startExtra()">🚗 FUORI ORARIO · START LIBERO</button>
+    <button class="extra" onclick="startExtra()">🚗 FUORI ORARIO · START LIBERO</button>\n    <div class="speed" aria-label="Velocità audio">\n      <button id="speedSlow" onclick="setSpeed(0.85)">Lenta<br>0.85×</button>\n      <button id="speedNormal" onclick="setSpeed(1.0)">Normale<br>1.0×</button>\n      <button id="speedFast" onclick="setSpeed(1.15)">Veloce<br>1.15×</button>\n    </div>
 
     <div class="stats">
       <div class="stat"><b id="todayStat">0/2</b><span>SESSIONI OGGI</span></div>
@@ -582,11 +582,11 @@ const daily=[
 let day=Math.max(1,Math.min(30,Number(localStorage.getItem("ed_day")||1)));
 let completed=JSON.parse(localStorage.getItem("ed_completed")||"{}");
 let mode="morning",blocks=[],blockIndex=0,lineIndex=0,elapsed=0,blockElapsed=0;
-let running=false,paused=false,timer=null,utterance=null,wakeLock=null,voices=[],extraMode=false;
+let running=false,paused=false,timer=null,utterance=null,wakeLock=null,voices=[],extraMode=false;\nlet playbackRate=Number(localStorage.getItem("ed_speed")||1.0);
 
 function key(){return "d"+day}
 function dateKey(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
-function rate(){return day<=7?.86:day<=15?.91:day<=23?.96:1.0}
+function rate(){return playbackRate}\nfunction setSpeed(v){playbackRate=v;localStorage.setItem("ed_speed",String(v));renderSpeed()}\nfunction renderSpeed(){\n  [["speedSlow",0.85],["speedNormal",1.0],["speedFast",1.15]].forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.classList.toggle("active",Math.abs(playbackRate-v)<0.01)});\n}
 function level(){return day<=10?"A2":day<=22?"A2+":"A2 → B1"}
 
 function advanceIfNeeded(){
