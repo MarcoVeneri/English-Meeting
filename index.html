@@ -9,177 +9,142 @@
 <meta name="apple-mobile-web-app-title" content="English Drive">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./icon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="./icon.svg">
 <title>English Drive</title>
 <style>
-:root{
-  color-scheme:light dark;
-  --bg:#f4f5f7;--card:rgba(255,255,255,.86);--card2:#fff;--text:#111318;--muted:#6d727c;
-  --line:rgba(17,19,24,.08);--accent:#2563eb;--accent2:#60a5fa;--shadow:0 18px 55px rgba(14,18,27,.10);
-  --good:#179b58;
-}
-@media(prefers-color-scheme:dark){
-  :root{--bg:#090b0f;--card:rgba(18,21,28,.88);--card2:#12151c;--text:#f4f7fb;--muted:#969ca8;
-  --line:rgba(255,255,255,.08);--accent:#4f8cff;--accent2:#7cb0ff;--shadow:0 22px 70px rgba(0,0,0,.35);--good:#47c982}
-}
+:root{color-scheme:light dark;--bg:#f4f5f7;--card:#fff;--text:#111318;--muted:#737985;--line:rgba(0,0,0,.08);--blue:#3277ff;--shadow:0 18px 60px rgba(20,30,50,.10)}
+@media(prefers-color-scheme:dark){:root{--bg:#090b0f;--card:#14171d;--text:#f5f7fb;--muted:#949aa6;--line:rgba(255,255,255,.08);--blue:#5b93ff;--shadow:0 22px 70px rgba(0,0,0,.35)}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
-body{min-height:100vh;min-height:100dvh;background:
-radial-gradient(circle at 50% -10%,rgba(79,140,255,.20),transparent 34%),var(--bg)}
+body{min-height:100dvh;background:radial-gradient(circle at 50% -15%,rgba(70,130,255,.22),transparent 34%),var(--bg)}
 button{font:inherit}
-.app{width:min(720px,100%);min-height:100dvh;margin:auto;padding:max(18px,env(safe-area-inset-top)) 18px calc(24px + env(safe-area-inset-bottom))}
-.top{display:flex;align-items:center;justify-content:space-between;padding:6px 2px 18px}
-.brand{font-weight:850;letter-spacing:-.035em;font-size:22px}
-.badge{font-size:12px;font-weight:750;color:var(--muted);background:var(--card);border:1px solid var(--line);padding:7px 10px;border-radius:999px;backdrop-filter:blur(18px)}
-.hero{background:var(--card);border:1px solid var(--line);border-radius:30px;padding:24px;box-shadow:var(--shadow);backdrop-filter:blur(22px);overflow:hidden;position:relative}
-.hero:after{content:"";position:absolute;width:210px;height:210px;border-radius:50%;right:-90px;top:-100px;background:radial-gradient(circle,rgba(79,140,255,.24),transparent 68%);pointer-events:none}
-.eyebrow{font-size:13px;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:.07em}
-h1{font-size:36px;line-height:1.02;letter-spacing:-.045em;margin:8px 0 9px}
-.sub{font-size:16px;line-height:1.4;color:var(--muted);max-width:520px}
-.tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;background:var(--line);padding:5px;border-radius:17px;margin:22px 0 18px}
-.tab{border:0;border-radius:13px;padding:12px 10px;font-weight:800;background:transparent;color:var(--muted)}
-.tab.active{background:var(--card2);color:var(--text);box-shadow:0 4px 14px rgba(0,0,0,.07)}
-.start{width:100%;border:0;border-radius:22px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;padding:20px 18px;font-size:21px;font-weight:850;box-shadow:0 12px 30px rgba(37,99,235,.26);display:flex;align-items:center;justify-content:center;gap:10px}
+.wrap{width:min(640px,100%);margin:auto;min-height:100dvh;padding:max(22px,env(safe-area-inset-top)) 20px calc(28px + env(safe-area-inset-bottom));display:flex;flex-direction:column}
+.brand{font-size:20px;font-weight:850;letter-spacing:-.03em}
+.card{margin-top:24px;background:var(--card);border:1px solid var(--line);border-radius:30px;padding:26px;box-shadow:var(--shadow)}
+.kicker{font-size:12px;font-weight:850;letter-spacing:.08em;color:var(--blue);text-transform:uppercase}
+h1{font-size:38px;line-height:1.02;letter-spacing:-.05em;margin:10px 0 8px}
+.sub{font-size:16px;line-height:1.45;color:var(--muted)}
+.session{margin:24px 0 16px;padding:14px 16px;border-radius:18px;background:rgba(127,127,127,.07);font-weight:800;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.session small{display:block;color:var(--muted);font-weight:650;margin-top:3px}
+.auto{font-size:12px;font-weight:850;color:var(--blue);white-space:nowrap}
+.start{width:100%;border:0;border-radius:24px;padding:22px 18px;background:linear-gradient(135deg,#246bff,#66a1ff);color:#fff;font-size:23px;font-weight:900;box-shadow:0 12px 30px rgba(37,99,235,.28)}
 .start:active{transform:scale(.985)}
-.meta{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
-.mini{padding:14px 10px;border:1px solid var(--line);border-radius:17px;background:rgba(127,127,127,.035);text-align:center}
-.mini strong{display:block;font-size:17px}.mini span{font-size:11px;color:var(--muted);font-weight:700}
-.section{margin-top:18px;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:18px;backdrop-filter:blur(18px)}
-.section-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.section-title strong{font-size:15px}.section-title span{font-size:12px;color:var(--muted)}
-.plan{display:grid;gap:9px}
-.planrow{display:grid;grid-template-columns:42px 1fr auto;gap:11px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
-.planrow:last-child{border:0}
-.dot{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:rgba(79,140,255,.11);font-weight:850;color:var(--accent)}
-.planrow b{font-size:14px}.planrow small{display:block;color:var(--muted);margin-top:2px}.mins{font-size:12px;font-weight:800;color:var(--muted)}
-.foot{font-size:12px;line-height:1.45;color:var(--muted);text-align:center;padding:18px 14px 0}
-.player{position:fixed;inset:0;background:var(--bg);z-index:20;display:none;overflow:auto}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.stat{border:1px solid var(--line);border-radius:17px;padding:13px;text-align:center}
+.stat b{display:block;font-size:17px}.stat span{font-size:11px;color:var(--muted);font-weight:800}
+.note{margin-top:18px;text-align:center;font-size:13px;line-height:1.5;color:var(--muted);padding:0 10px}
+.player{position:fixed;inset:0;z-index:10;background:var(--bg);display:none}
 .player.open{display:block}
-.player-inner{width:min(720px,100%);min-height:100dvh;margin:auto;padding:max(18px,env(safe-area-inset-top)) 20px calc(28px + env(safe-area-inset-bottom));display:flex;flex-direction:column}
-.player-top{display:flex;justify-content:space-between;align-items:center}
-.close,.textbtn{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:999px;padding:10px 14px;font-weight:750}
-.now{margin-top:28px;color:var(--accent);font-weight:850;font-size:13px;text-transform:uppercase;letter-spacing:.07em}
-.player h2{font-size:32px;line-height:1.05;letter-spacing:-.04em;margin:8px 0}
-.segment{color:var(--muted);font-size:15px}
-.ring-wrap{display:grid;place-items:center;margin:34px 0 24px;position:relative}
-.ring{width:min(260px,70vw);aspect-ratio:1;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--accent) var(--p,0%),var(--line) 0);position:relative}
-.ring:after{content:"";position:absolute;inset:12px;border-radius:50%;background:var(--bg)}
-.clock{position:relative;z-index:1;text-align:center}.clock b{display:block;font-size:44px;letter-spacing:-.045em}.clock span{color:var(--muted);font-size:12px;font-weight:750}
-.transcript{min-height:104px;padding:18px;background:var(--card);border:1px solid var(--line);border-radius:20px;display:none;align-items:center;justify-content:center;text-align:center;line-height:1.45;font-size:18px}
-.transcript.show{display:flex}
-.controls{display:grid;grid-template-columns:1fr 1.35fr 1fr;gap:14px;align-items:center;margin-top:auto;padding-top:30px}
-.ctrl{height:66px;border:1px solid var(--line);border-radius:22px;background:var(--card);color:var(--text);font-size:20px;font-weight:850}
-.ctrl.main{height:78px;background:var(--text);color:var(--bg);font-size:30px}
-.repeat{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:16px;color:var(--muted);font-weight:750;font-size:13px}
-.repeat button{border:0;background:none;color:var(--accent);font-weight:850}
-.statusbar{height:5px;background:var(--line);border-radius:999px;overflow:hidden;margin-top:18px}
-.statusbar i{display:block;height:100%;width:0;background:var(--accent);border-radius:999px}
-.done{display:none;text-align:center;margin:auto 0}.done.show{display:block}.done .check{font-size:70px}.done h2{font-size:34px}.done p{color:var(--muted);line-height:1.45}.done button{margin-top:18px}
-@media(max-width:430px){h1{font-size:32px}.hero{padding:21px}.player h2{font-size:29px}.clock b{font-size:40px}}
+.player .wrap{justify-content:space-between}
+.top{display:flex;justify-content:space-between;align-items:center}
+.close{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:999px;padding:10px 15px;font-weight:800}
+.voice{font-size:14px;font-weight:900;color:var(--blue)}
+.center{text-align:center}
+.center h2{font-size:31px;letter-spacing:-.04em;margin:12px 0 6px}
+.center p{margin:0;color:var(--muted)}
+.ring{width:min(270px,72vw);aspect-ratio:1;border-radius:50%;margin:34px auto;display:grid;place-items:center;background:conic-gradient(var(--blue) var(--p,0%),var(--line) 0);position:relative}
+.ring:after{content:"";position:absolute;inset:13px;border-radius:50%;background:var(--bg)}
+.time{position:relative;z-index:1}
+.time b{display:block;font-size:48px;letter-spacing:-.055em}
+.time span{font-size:11px;color:var(--muted);font-weight:800;letter-spacing:.04em}
+.pause{width:96px;height:96px;border-radius:50%;border:0;background:var(--text);color:var(--bg);font-size:38px;font-weight:900;margin:auto;display:block}
+.progress{margin-top:26px;height:5px;background:var(--line);border-radius:999px;overflow:hidden}
+.progress i{display:block;height:100%;width:0;background:var(--blue)}
+.bottom{text-align:center;color:var(--muted);font-size:13px;line-height:1.45;padding:0 18px}
+.done{display:none;text-align:center;margin:auto 0}
+.done.show{display:block}
+.done .ok{font-size:72px}.done h2{font-size:34px;margin:10px 0}.done p{color:var(--muted);line-height:1.45}
+.done .start{margin-top:20px}
+@media(max-width:430px){h1{font-size:34px}.card{padding:22px}.center h2{font-size:28px}}
 </style>
 </head>
 <body>
-<div class="app" id="home">
-  <div class="top"><div class="brand">English Drive</div><div class="badge" id="levelBadge">A2 → B1</div></div>
+<div class="wrap" id="home">
+  <div class="brand">English Drive</div>
+  <section class="card">
+    <div class="kicker" id="dayLabel">GIORNO 1 DI 30</div>
+    <h1 id="topic">Opening a meeting</h1>
+    <div class="sub" id="focus">Ascolta e basta. Non devi capire tutto.</div>
 
-  <main class="hero">
-    <div class="eyebrow" id="dayLabel">GIORNO 1 DI 30</div>
-    <h1 id="topicTitle">Opening a meeting</h1>
-    <div class="sub" id="topicFocus">Allena l'orecchio con inglese da riunione, accento UK e USA. Non devi capire tutto.</div>
-
-    <div class="tabs">
-      <button class="tab active" id="morningTab" onclick="selectSession('morning')">☀️ Mattina · 60 min</button>
-      <button class="tab" id="eveningTab" onclick="selectSession('evening')">🌙 Sera · 60 min</button>
+    <div class="session">
+      <div><span id="sessionTitle">☀️ Sessione mattina · 60 min</span><small>UK ↔ USA automatico</small></div>
+      <div class="auto">AUTO</div>
     </div>
 
-    <button class="start" id="startBtn" onclick="startSession()">▶ <span>START · 60 MIN</span></button>
+    <button class="start" id="startBtn" onclick="startSession()">▶ START</button>
 
-    <div class="meta">
-      <div class="mini"><strong id="doneToday">0/2</strong><span>SESSIONI OGGI</span></div>
-      <div class="mini"><strong id="rateText">0.86×</strong><span>VELOCITÀ</span></div>
-      <div class="mini"><strong id="progressText">0%</strong><span>PERCORSO</span></div>
+    <div class="stats">
+      <div class="stat"><b id="todayStat">0/2</b><span>SESSIONI OGGI</span></div>
+      <div class="stat"><b id="levelStat">A2</b><span>LIVELLO</span></div>
     </div>
-  </main>
-
-  <section class="section">
-    <div class="section-title"><strong id="planTitle">Sessione mattina</strong><span>un solo tap e poi va da sola</span></div>
-    <div class="plan" id="plan"></div>
   </section>
-  <div class="foot">Ascolta senza tradurre parola per parola. Se perdi una frase, continua. L'obiettivo è riconoscere sempre più suoni, parole e blocchi di frase.</div>
+  <div class="note">Premi START una volta. Da lì cambia da solo tra voce britannica e americana durante tutta l’ora.</div>
 </div>
 
 <div class="player" id="player">
-  <div class="player-inner">
-    <div id="playArea">
-      <div class="player-top">
-        <button class="close" onclick="stopAndClose()">✕ Chiudi</button>
-        <button class="textbtn" onclick="toggleTranscript()">Testo</button>
+  <div class="wrap">
+    <div id="playing">
+      <div class="top">
+        <button class="close" onclick="closePlayer()">✕ Chiudi</button>
+        <div class="voice" id="voiceLabel">🇬🇧 UK</div>
       </div>
-      <div class="now" id="nowLabel">BUSINESS ENGLISH</div>
-      <h2 id="playTopic">Opening a meeting</h2>
-      <div class="segment" id="segmentLabel">Meeting English · 36 min</div>
 
-      <div class="ring-wrap">
+      <div class="center">
+        <h2 id="playTopic">Opening a meeting</h2>
+        <p id="blockLabel">Business English</p>
         <div class="ring" id="ring">
-          <div class="clock"><b id="clock">60:00</b><span id="clockLabel">TEMPO RIMANENTE</span></div>
+          <div class="time"><b id="clock">60:00</b><span>TEMPO RIMANENTE</span></div>
         </div>
+        <button class="pause" id="pauseBtn" onclick="togglePause()">Ⅱ</button>
+        <div class="progress"><i id="progress"></i></div>
       </div>
-
-      <div class="transcript" id="transcript"></div>
-
-      <div class="statusbar"><i id="segmentProgress"></i></div>
-
-      <div class="controls">
-        <button class="ctrl" onclick="jump(-3)">↶ 15</button>
-        <button class="ctrl main" id="pauseBtn" onclick="togglePause()">Ⅱ</button>
-        <button class="ctrl" onclick="jump(3)">15 ↷</button>
-      </div>
-      <div class="repeat"><span>Ripetizione frase</span><button id="repeatBtn" onclick="toggleRepeat()">OFF</button></div>
     </div>
 
-    <div class="done" id="doneArea">
-      <div class="check">✓</div>
-      <h2>Sessione completata</h2>
-      <p id="doneMsg">Hai fatto un'ora di ascolto. Non importa quanto hai capito: hai allenato l'orecchio.</p>
-      <button class="start" onclick="finishAndClose()">TORNA ALLA HOME</button>
+    <div class="done" id="done">
+      <div class="ok">✓</div>
+      <h2>Fatto</h2>
+      <p id="doneText">Un’ora di inglese ascoltata. È esattamente questo l’allenamento che serve al tuo orecchio.</p>
+      <button class="start" onclick="finish()">TORNA ALLA HOME</button>
     </div>
+
+    <div class="bottom" id="bottomText">Non tradurre. Se perdi una frase, continua ad ascoltare.</div>
   </div>
 </div>
 
 <script>
-const topics = [
-["Introductions & role","Presentarti, spiegare il tuo ruolo e il tuo team"],
-["Opening a meeting","Aprire una call e mettere tutti a proprio agio"],
-["Agenda & objectives","Spiegare agenda e obiettivi della riunione"],
-["Status updates","Dare un aggiornamento breve e chiaro"],
-["Priorities","Parlare di priorità e attività più urgenti"],
-["Clarification","Chiedere di ripetere o chiarire senza bloccarti"],
-["Interrupting politely","Entrare nella conversazione in modo naturale"],
-["Deadlines","Parlare di date, scadenze e ritardi"],
-["Risks & issues","Descrivere rischi, problemi e impatti"],
-["Dependencies","Spiegare dipendenze tra team e attività"],
-["Team workload","Parlare di carico di lavoro e capacità del team"],
-["Delegation","Assegnare attività e verificare la comprensione"],
-["Client requests","Gestire richieste e aspettative del cliente"],
-["Scope changes","Parlare di cambi di perimetro"],
-["Escalations","Portare un problema al livello giusto"],
-["Decisions","Confermare decisioni e motivazioni"],
-["Actions & ownership","Definire chi fa cosa e per quando"],
-["Progress review","Rivedere avanzamento e punti aperti"],
-["Quality & testing","Parlare di qualità, test e criteri di accettazione"],
-["Problem solving","Analizzare un problema e proporre opzioni"],
-["Negotiation","Negoziare priorità, tempi e compromessi"],
-["Difficult conversations","Gestire disaccordi in modo professionale"],
-["Numbers & performance","Presentare numeri, trend e risultati"],
-["Next steps","Chiudere una riunione con i prossimi passi"],
-["Remote collaboration","Collaborare bene con team distribuiti"],
-["Stakeholder alignment","Allineare persone con esigenze diverse"],
-["Steering committee","Aggiornare management e stakeholder senior"],
-["Delivery confidence","Parlare di piano, rischi e fiducia nella delivery"],
-["Full project update","Simulare un aggiornamento completo di progetto"],
-["Full meeting simulation","Seguire una riunione completa UK/USA"]
+const topics=[
+["Introductions & role","Presentarti e spiegare ruolo e team"],
+["Opening a meeting","Aprire una call con sicurezza"],
+["Agenda & objectives","Capire agenda e obiettivi"],
+["Status updates","Dare e seguire aggiornamenti"],
+["Priorities","Parlare di priorità"],
+["Clarification","Chiedere di ripetere o chiarire"],
+["Interrupting politely","Intervenire senza bloccare la conversazione"],
+["Deadlines","Date, scadenze e ritardi"],
+["Risks & issues","Rischi, problemi e impatti"],
+["Dependencies","Dipendenze tra team"],
+["Team workload","Carico di lavoro e capacità"],
+["Delegation","Assegnare attività"],
+["Client requests","Richieste e aspettative del cliente"],
+["Scope changes","Cambi di perimetro"],
+["Escalations","Gestire escalation"],
+["Decisions","Confermare decisioni"],
+["Actions & ownership","Owner e azioni"],
+["Progress review","Avanzamento e punti aperti"],
+["Quality & testing","Qualità e test"],
+["Problem solving","Problemi e soluzioni"],
+["Negotiation","Tempi e compromessi"],
+["Difficult conversations","Disaccordi professionali"],
+["Numbers & performance","Numeri e risultati"],
+["Next steps","Chiudere con i prossimi passi"],
+["Remote collaboration","Team distribuiti"],
+["Stakeholder alignment","Allineare stakeholder"],
+["Steering committee","Aggiornare management"],
+["Delivery confidence","Piano, rischi e delivery"],
+["Full project update","Aggiornamento completo"],
+["Full meeting simulation","Riunione completa UK/USA"]
 ];
 
-const businessCore = [
+const core=[
 "Good morning everyone. Thanks for joining.",
 "Before we start, can everyone hear me clearly?",
 "The main objective today is to review the current status and agree on the next steps.",
@@ -206,291 +171,204 @@ const businessCore = [
 "Thanks everyone. I think we have a clear way forward."
 ];
 
-const roleLines = [
+const role=[
 "I'm a Delivery Lead working in public sector and healthcare.",
 "I currently manage a team of eleven people.",
 "My role is to support the team, remove blockers and improve delivery performance.",
 "I often join calls with colleagues and clients in the UK and the US."
 ];
 
-const ukBase = [
+const uk=[
 "Right, shall we get started? I think the main thing today is to understand where we are and what still needs to be done.",
 "From our side, the work is moving forward, although there are a couple of points we need to clarify before Friday.",
-"If anything changes, please flag it as early as possible so that we can adjust the plan without creating unnecessary pressure.",
-"Before we wrap up, let's confirm the actions, the owners and the dates, just to make sure we're all aligned."
+"If anything changes, please flag it as early as possible so that we can adjust the plan.",
+"Before we wrap up, let's confirm the actions, the owners and the dates, just to make sure we're all aligned.",
+"If you're not sure about a point, just say so. Asking for clarification is completely normal in an international meeting.",
+"We can take the detail offline if necessary, but for now let's agree on the decision we need from this call."
 ];
 
-const usBase = [
+const us=[
 "Okay everyone, let's get started. I want to make sure we're clear on the goal for today's call.",
-"The team is making good progress, but there's one dependency that could affect the timeline if we don't address it soon.",
+"The team is making good progress, but there's one dependency that could affect the timeline.",
 "If you have a concern, please bring it up. It's better to discuss it now than discover it later in the project.",
-"Before we finish, let's recap the decisions and make sure every action has an owner and a due date."
+"Before we finish, let's recap the decisions and make sure every action has an owner and a due date.",
+"Here's the bottom line: we need a clear owner, a realistic timeline, and early visibility of any risk.",
+"If something isn't clear, jump in and ask. That's better than leaving the call with the wrong understanding."
 ];
 
-const connectors = [
-"First of all","At the moment","In addition","However","For that reason","From our side",
-"To be clear","As a next step","In the short term","Before we move on"
-];
+let day=Math.max(1,Math.min(30,Number(localStorage.getItem("ed_day")||1)));
+let completed=JSON.parse(localStorage.getItem("ed_completed")||"{}");
+let mode="morning",blocks=[],blockIndex=0,lineIndex=0,elapsed=0,blockElapsed=0;
+let running=false,paused=false,timer=null,utterance=null,wakeLock=null,voices=[];
 
-let selected = "morning";
-let day = Math.max(1,Math.min(30,Number(localStorage.getItem("ed_day")||1)));
-let completed = JSON.parse(localStorage.getItem("ed_completed")||"{}");
-let running=false, paused=false, repeat=false, queueIndex=0, segIndex=0;
-let sessionElapsed=0, segmentElapsed=0, ticker=null, currentItems=[], utterance=null, wakeLock=null;
-let currentSegments=[];
+function key(){return "d"+day}
+function rate(){return day<=7?.86:day<=15?.91:day<=23?.96:1.0}
+function level(){return day<=10?"A2":day<=22?"A2+":"A2 → B1"}
 
-function todayKey(){return "d"+day}
-function rateForDay(){ return day<=7 ? .86 : day<=15 ? .91 : day<=23 ? .96 : 1.0; }
-function speechRate(){ return rateForDay(); }
-function levelForDay(){ return day<=10?"A2":day<=22?"A2+": "A2 → B1"; }
-
-function topic(){
-  const t=topics[day-1];
-  return {title:t[0],focus:t[1]};
+function chooseMode(){
+  const c=completed[key()]||{};
+  const h=new Date().getHours();
+  if(c.morning&&!c.evening)return "evening";
+  if(c.evening&&!c.morning)return "morning";
+  return h<14?"morning":"evening";
 }
 
-function makeBusiness(){
-  const t=topic();
-  const extra = [
-    `Today's focus is ${t.title.toLowerCase()}.`,
-    `The key point for this meeting is ${t.focus.toLowerCase()}.`,
-    `${connectors[day%connectors.length]}, we need to keep the message simple and clear.`,
-    "If I don't understand something, I can ask the speaker to repeat it more slowly.",
+function enrich(arr){
+  const t=topics[day-1];
+  return [
+    ...arr,
+    "Today's topic is "+t[0]+".",
+    "Listen for the key words. You do not need to understand every word.",
     "Could you say that again, please?",
     "Would you mind speaking a little more slowly?",
     "Let me check that I understood correctly.",
     "So, if I understand you correctly, this is the main priority."
   ];
-  return [...roleLines,...businessCore,...extra];
 }
 
-function makeUK(){
-  const t=topic();
+function sessionBlocks(){
+  const business=enrich([...role,...core]);
+  if(mode==="morning"){
+    return [
+      {name:"Business English",locale:"en-GB",mins:18,lines:business},
+      {name:"Business English",locale:"en-US",mins:18,lines:business.slice().reverse()},
+      {name:"UK listening",locale:"en-GB",mins:12,lines:enrich(uk)},
+      {name:"US listening",locale:"en-US",mins:12,lines:enrich(us)}
+    ];
+  }
   return [
-    ...ukBase,
-    `Today we're focusing on ${t.title.toLowerCase()}. The aim is not to make things complicated; it's to make sure everybody understands what happens next.`,
-    "If you're not sure about a point, just say so. Asking for clarification is completely normal in an international meeting.",
-    "We can take the detail offline if necessary, but for now let's agree on the decision we need from this call.",
-    "There may be different views around the table, so let's hear them and then decide how we want to move forward."
-  ];
-}
-
-function makeUS(){
-  const t=topic();
-  return [
-    ...usBase,
-    `For today's practice, the main topic is ${t.title.toLowerCase()}. Listen for the key words and don't worry about every single word.`,
-    "Here's the bottom line: we need a clear owner, a realistic timeline, and early visibility of any risk.",
-    "If something isn't clear, jump in and ask. That's much better than leaving the call with the wrong understanding.",
-    "Let's keep the conversation practical. What do we know, what do we need, and what's the next action?"
-  ];
-}
-
-function morningSegments(){
-  return [
-    {name:"Business English",lang:"en-US",mins:36,items:makeBusiness(),note:"Meeting English · lavoro, team e delivery"},
-    {name:"UK Listening",lang:"en-GB",mins:12,items:makeUK(),note:"Accento britannico · ritmo naturale"},
-    {name:"US Listening",lang:"en-US",mins:12,items:makeUS(),note:"Accento americano · ritmo naturale"}
-  ];
-}
-function eveningSegments(){
-  return [
-    {name:"Morning Review",lang:"en-US",mins:30,items:[...makeBusiness().slice(0,18),...makeUK().slice(0,3),...makeUS().slice(0,3)],note:"Riascolto · consolida ciò che hai sentito"},
-    {name:"Easy Listening",lang:"en-GB",mins:15,items:["Listen and follow the meaning, not every word.","You do not need to translate. Just notice the sounds and the rhythm.",...makeUK()],note:"Ascolto più facile · UK"},
-    {name:"Immersion",lang:"en-US",mins:15,items:[...makeUS(),...businessCore.slice(8,20)],note:"Immersione · USA e meeting reali"}
+    {name:"Review",locale:"en-GB",mins:15,lines:enrich([...core.slice(0,14),...uk])},
+    {name:"Review",locale:"en-US",mins:15,lines:enrich([...core.slice(10),...us])},
+    {name:"UK listening",locale:"en-GB",mins:15,lines:enrich(uk)},
+    {name:"US listening",locale:"en-US",mins:15,lines:enrich(us)}
   ];
 }
 
 function render(){
-  const t=topic();
-  document.getElementById("dayLabel").textContent=`GIORNO ${day} DI 30`;
-  document.getElementById("topicTitle").textContent=t.title;
-  document.getElementById("topicFocus").textContent=t.focus+". Non devi capire tutto: ascolta e continua.";
-  document.getElementById("levelBadge").textContent=levelForDay();
-  document.getElementById("rateText").textContent=rateForDay().toFixed(2)+"×";
-  document.getElementById("progressText").textContent=Math.round(((day-1)/30)*100)+"%";
-  const c=completed[todayKey()]||{};
-  document.getElementById("doneToday").textContent=(Number(!!c.morning)+Number(!!c.evening))+"/2";
-  selectSession(selected,false);
+  mode=chooseMode();
+  const t=topics[day-1],c=completed[key()]||{};
+  document.getElementById("dayLabel").textContent="GIORNO "+day+" DI 30";
+  document.getElementById("topic").textContent=t[0];
+  document.getElementById("focus").textContent=t[1]+". Ascolta e basta: non devi capire tutto.";
+  document.getElementById("sessionTitle").textContent=(mode==="morning"?"☀️ Sessione mattina":"🌙 Sessione sera")+" · 60 min";
+  document.getElementById("todayStat").textContent=(Number(!!c.morning)+Number(!!c.evening))+"/2";
+  document.getElementById("levelStat").textContent=level();
 }
 
-function selectSession(type,rerender=true){
-  selected=type;
-  document.getElementById("morningTab").classList.toggle("active",type==="morning");
-  document.getElementById("eveningTab").classList.toggle("active",type==="evening");
-  const segs= type==="morning" ? morningSegments() : eveningSegments();
-  document.getElementById("planTitle").textContent=type==="morning"?"Sessione mattina":"Sessione sera";
-  document.getElementById("plan").innerHTML=segs.map((s,i)=>`
-    <div class="planrow"><div class="dot">${i+1}</div><div><b>${s.name}</b><small>${s.note}</small></div><div class="mins">${s.mins} min</div></div>`).join("");
-  const c=completed[todayKey()]||{};
-  const done=!!c[type];
-  document.querySelector("#startBtn span").textContent=done?"RIASCOLTA · 60 MIN":"START · 60 MIN";
+function loadVoices(){
+  voices=speechSynthesis.getVoices();
+  return new Promise(resolve=>{
+    if(voices.length)return resolve();
+    let tries=0;
+    const id=setInterval(()=>{
+      voices=speechSynthesis.getVoices();
+      if(voices.length||++tries>10){clearInterval(id);resolve()}
+    },100);
+  });
 }
 
-function preferredVoice(lang){
-  const voices=speechSynthesis.getVoices();
-  const same=voices.filter(v=>v.lang && v.lang.toLowerCase().startsWith(lang.toLowerCase()));
-  const preferred=["Siri","Daniel","Samantha","Karen","Moira","Alex","Microsoft","Google"];
-  for(const p of preferred){const v=same.find(x=>x.name.includes(p)); if(v)return v;}
-  return same[0]||voices.find(v=>v.lang&&v.lang.toLowerCase().startsWith(lang.slice(0,2)))||null;
+function voiceFor(locale){
+  const exact=voices.filter(v=>String(v.lang||"").toLowerCase()===locale.toLowerCase());
+  const same=exact.length?exact:voices.filter(v=>String(v.lang||"").toLowerCase().startsWith(locale.slice(0,2).toLowerCase()));
+  const prefs=locale==="en-GB"?["Daniel","Serena","Martha","Google UK","Microsoft"]:["Samantha","Alex","Karen","Google US","Microsoft"];
+  for(const p of prefs){const found=same.find(v=>v.name.includes(p));if(found)return found}
+  return same[0]||null;
 }
 
-async function requestWakeLock(){
-  try{ if("wakeLock" in navigator) wakeLock=await navigator.wakeLock.request("screen"); }catch(e){}
-}
-
-function startSession(){
-  if(!("speechSynthesis" in window)){
-    alert("Il browser non supporta la sintesi vocale. Apri la PWA con Safari su iPhone/iPad o Chrome.");
-    return;
-  }
+async function startSession(){
+  if(!("speechSynthesis" in window)){alert("Apri la PWA con Safari su iPhone/iPad o Chrome.");return}
+  await loadVoices();
+  mode=chooseMode();blocks=sessionBlocks();blockIndex=0;lineIndex=0;elapsed=0;blockElapsed=0;running=true;paused=false;
   speechSynthesis.cancel();
-  currentSegments=selected==="morning"?morningSegments():eveningSegments();
-  segIndex=0;queueIndex=0;sessionElapsed=0;segmentElapsed=0;running=true;paused=false;repeat=false;
   document.getElementById("player").classList.add("open");
-  document.getElementById("playArea").style.display="block";
-  document.getElementById("doneArea").classList.remove("show");
-  document.getElementById("playTopic").textContent=topic().title;
+  document.getElementById("playing").style.display="block";
+  document.getElementById("done").classList.remove("show");
+  document.getElementById("playTopic").textContent=topics[day-1][0];
   document.getElementById("pauseBtn").textContent="Ⅱ";
-  document.getElementById("repeatBtn").textContent="OFF";
-  requestWakeLock();
+  if("wakeLock" in navigator){try{wakeLock=await navigator.wakeLock.request("screen")}catch(e){}}
   updatePlayer();
-  if(ticker)clearInterval(ticker);
-  ticker=setInterval(()=>{
-    if(running && !paused){
-      sessionElapsed++;
-      segmentElapsed++;
-      updateClock();
-    }
-  },1000);
-  setTimeout(speakCurrent,220);
+  clearInterval(timer);
+  timer=setInterval(()=>{if(running&&!paused){elapsed++;blockElapsed++;updateClock()}},1000);
+  setTimeout(speak,180);
 }
 
-function speakCurrent(){
+function speak(){
   if(!running||paused)return;
-  const seg=currentSegments[segIndex];
-  currentItems=seg.items;
-  if(queueIndex>=currentItems.length)queueIndex=0;
-  const text=currentItems[queueIndex];
-  document.getElementById("transcript").textContent=text;
-  utterance=new SpeechSynthesisUtterance(text);
-  utterance.lang=seg.lang;
-  utterance.rate=speechRate();
-  utterance.pitch=1;
-  const v=preferredVoice(seg.lang); if(v)utterance.voice=v;
+  const b=blocks[blockIndex];
+  if(lineIndex>=b.lines.length)lineIndex=0;
+  utterance=new SpeechSynthesisUtterance(b.lines[lineIndex]);
+  utterance.lang=b.locale;
+  utterance.rate=rate();
+  const v=voiceFor(b.locale);if(v)utterance.voice=v;
   utterance.onend=()=>{
     if(!running||paused)return;
-    const limit=seg.mins*60;
-    if(segmentElapsed>=limit){
-      segIndex++;
-      segmentElapsed=0;queueIndex=0;
-      if(segIndex>=currentSegments.length){completeSession();return;}
+    if(blockElapsed>=b.mins*60){
+      blockIndex++;blockElapsed=0;lineIndex=0;
+      if(blockIndex>=blocks.length){complete();return}
       updatePlayer();
-      setTimeout(speakCurrent,180);
-      return;
-    }
-    if(!repeat)queueIndex=(queueIndex+1)%currentItems.length;
-    setTimeout(speakCurrent,150);
+    }else{lineIndex=(lineIndex+1)%b.lines.length}
+    setTimeout(speak,120);
   };
-  utterance.onerror=()=>{ if(running&&!paused){queueIndex=(queueIndex+1)%currentItems.length;setTimeout(speakCurrent,300)} };
+  utterance.onerror=()=>{if(running&&!paused){lineIndex=(lineIndex+1)%b.lines.length;setTimeout(speak,250)}};
   speechSynthesis.speak(utterance);
 }
 
 function updatePlayer(){
-  const seg=currentSegments[segIndex];
-  document.getElementById("nowLabel").textContent=seg.name;
-  document.getElementById("segmentLabel").textContent=seg.note+" · "+seg.mins+" min";
+  const b=blocks[blockIndex];
+  document.getElementById("voiceLabel").textContent=b.locale==="en-GB"?"🇬🇧 UK":"🇺🇸 USA";
+  document.getElementById("blockLabel").textContent=b.name+" · cambio accento automatico";
   updateClock();
-  if("mediaSession" in navigator){
-    try{
-      navigator.mediaSession.metadata=new MediaMetadata({title:topic().title,artist:"English Drive",album:selected==="morning"?"Morning Drive":"Evening Drive"});
+  try{
+    if("mediaSession" in navigator){
+      navigator.mediaSession.metadata=new MediaMetadata({title:topics[day-1][0],artist:"English Drive",album:mode==="morning"?"Morning":"Evening"});
       navigator.mediaSession.setActionHandler("play",()=>{if(paused)togglePause()});
       navigator.mediaSession.setActionHandler("pause",()=>{if(!paused)togglePause()});
-      navigator.mediaSession.setActionHandler("previoustrack",()=>jump(-3));
-      navigator.mediaSession.setActionHandler("nexttrack",()=>jump(3));
-    }catch(e){}
-  }
+    }
+  }catch(e){}
 }
 
 function updateClock(){
-  const total=3600;
-  const remain=Math.max(0,total-sessionElapsed);
-  const m=Math.floor(remain/60),s=remain%60;
+  const remain=Math.max(0,3600-elapsed),m=Math.floor(remain/60),s=remain%60,p=Math.min(100,elapsed/36);
   document.getElementById("clock").textContent=String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
-  const pct=Math.min(100,(sessionElapsed/total)*100);
-  document.getElementById("ring").style.setProperty("--p",pct+"%");
-  document.getElementById("segmentProgress").style.width=Math.min(100,(segmentElapsed/(currentSegments[segIndex].mins*60))*100)+"%";
+  document.getElementById("ring").style.setProperty("--p",p+"%");
+  document.getElementById("progress").style.width=p+"%";
 }
 
 function togglePause(){
   if(!running)return;
-  if(paused){
-    paused=false;document.getElementById("pauseBtn").textContent="Ⅱ";
-    speechSynthesis.resume();
-    if(!speechSynthesis.speaking)setTimeout(speakCurrent,120);
-  }else{
-    paused=true;document.getElementById("pauseBtn").textContent="▶";
-    speechSynthesis.pause();
-  }
+  if(paused){paused=false;document.getElementById("pauseBtn").textContent="Ⅱ";speechSynthesis.resume();if(!speechSynthesis.speaking)setTimeout(speak,100)}
+  else{paused=true;document.getElementById("pauseBtn").textContent="▶";speechSynthesis.pause()}
 }
 
-function jump(delta){
-  if(!running)return;
-  speechSynthesis.cancel();
-  const items=currentSegments[segIndex].items;
-  queueIndex=(queueIndex+delta)%items.length;if(queueIndex<0)queueIndex+=items.length;
-  if(!paused)setTimeout(speakCurrent,120);
-}
-
-function toggleRepeat(){
-  repeat=!repeat;
-  document.getElementById("repeatBtn").textContent=repeat?"ON":"OFF";
-}
-
-function toggleTranscript(){ document.getElementById("transcript").classList.toggle("show"); }
-
-function completeSession(){
-  running=false;paused=false;speechSynthesis.cancel();if(ticker)clearInterval(ticker);
+function complete(){
+  running=false;paused=false;clearInterval(timer);speechSynthesis.cancel();
   if(wakeLock){try{wakeLock.release()}catch(e){}wakeLock=null}
-  completed[todayKey()]=completed[todayKey()]||{};
-  completed[todayKey()][selected]=true;
+  completed[key()]=completed[key()]||{};
+  completed[key()][mode]=true;
   localStorage.setItem("ed_completed",JSON.stringify(completed));
-  document.getElementById("playArea").style.display="none";
-  document.getElementById("doneArea").classList.add("show");
-  document.getElementById("doneMsg").textContent=selected==="morning"
-    ?"Ottimo. Questa sera riascolterai una parte dello stesso materiale: è lì che l'orecchio comincia a riconoscere le frasi più velocemente."
-    :"Giornata completata. Hai fatto due ore di esposizione all'inglese. Domani il programma passa al tema successivo.";
+  document.getElementById("playing").style.display="none";
+  document.getElementById("done").classList.add("show");
+  document.getElementById("doneText").textContent=mode==="morning"
+    ?"Mattina completata. La sera la PWA riprenderà automaticamente il ripasso e cambierà ancora tra UK e USA."
+    :"Sera completata. Hai fatto il tuo allenamento d'ascolto di oggi.";
 }
 
-function finishAndClose(){
-  const c=completed[todayKey()]||{};
-  if(c.morning&&c.evening&&day<30){
-    day++;
-    localStorage.setItem("ed_day",String(day));
-    selected="morning";
-  }
+function closePlayer(){
+  running=false;paused=false;clearInterval(timer);speechSynthesis.cancel();
+  if(wakeLock){try{wakeLock.release()}catch(e){}wakeLock=null}
+  document.getElementById("player").classList.remove("open");
+}
+
+function finish(){
+  const c=completed[key()]||{};
+  if(c.morning&&c.evening&&day<30){day++;localStorage.setItem("ed_day",String(day))}
   document.getElementById("player").classList.remove("open");
   render();
 }
 
-function stopAndClose(){
-  if(running){
-    running=false;speechSynthesis.cancel();if(ticker)clearInterval(ticker);
-    if(wakeLock){try{wakeLock.release()}catch(e){}wakeLock=null}
-  }
-  document.getElementById("player").classList.remove("open");
-}
-
-function autoChoose(){
-  const c=completed[todayKey()]||{};
-  const h=new Date().getHours();
-  if(c.morning&&!c.evening)selected="evening";
-  else selected=h>=15?"evening":"morning";
-}
-speechSynthesis.onvoiceschanged=()=>{};
 if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
-document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&running&&!paused&&!speechSynthesis.speaking)setTimeout(speakCurrent,250)});
-autoChoose();render();
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&running&&!paused&&!speechSynthesis.speaking)setTimeout(speak,200)});
+render();
 </script>
 </body>
 </html>
