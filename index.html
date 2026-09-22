@@ -28,6 +28,7 @@ h1{font-size:38px;line-height:1.02;letter-spacing:-.05em;margin:10px 0 8px}
 .auto{font-size:12px;font-weight:850;color:var(--blue);white-space:nowrap}
 .start{width:100%;border:0;border-radius:24px;padding:22px 18px;background:linear-gradient(135deg,#246bff,#66a1ff);color:#fff;font-size:23px;font-weight:900;box-shadow:0 12px 30px rgba(37,99,235,.28)}
 .start:active{transform:scale(.985)}
+.extra{width:100%;border:1px solid var(--line);border-radius:19px;padding:15px 16px;margin-top:11px;background:transparent;color:var(--text);font-size:15px;font-weight:850}.extra:active{transform:scale(.985)}
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
 .stat{border:1px solid var(--line);border-radius:17px;padding:13px;text-align:center}
 .stat b{display:block;font-size:17px}.stat span{font-size:11px;color:var(--muted);font-weight:800}
@@ -71,6 +72,7 @@ h1{font-size:38px;line-height:1.02;letter-spacing:-.05em;margin:10px 0 8px}
     </div>
 
     <button class="start" id="startBtn" onclick="startSession()">▶ START</button>
+    <button class="extra" onclick="startExtra()">🚗 FUORI ORARIO · START LIBERO</button>
 
     <div class="stats">
       <div class="stat"><b id="todayStat">0/2</b><span>SESSIONI OGGI</span></div>
@@ -84,7 +86,7 @@ h1{font-size:38px;line-height:1.02;letter-spacing:-.05em;margin:10px 0 8px}
   <div class="wrap">
     <div id="playing">
       <div class="top">
-        <button class="close" onclick="closePlayer()">✕ Chiudi</button>
+        <button class="close" id="closeBtn" onclick="closePlayer()">✕ Chiudi</button>
         <div class="voice" id="voiceLabel">🇬🇧 UK</div>
       </div>
 
@@ -92,7 +94,7 @@ h1{font-size:38px;line-height:1.02;letter-spacing:-.05em;margin:10px 0 8px}
         <h2 id="playTopic">Opening a meeting</h2>
         <p id="blockLabel">Business English</p>
         <div class="ring" id="ring">
-          <div class="time"><b id="clock">60:00</b><span>TEMPO RIMANENTE</span></div>
+          <div class="time"><b id="clock">60:00</b><span id="clockCaption">TEMPO RIMANENTE</span></div>
         </div>
         <button class="pause" id="pauseBtn" onclick="togglePause()">Ⅱ</button>
         <div class="progress"><i id="progress"></i></div>
@@ -144,66 +146,456 @@ const topics=[
 ["Full meeting simulation","Riunione completa UK/USA"]
 ];
 
-const core=[
-"Good morning everyone. Thanks for joining.",
-"Before we start, can everyone hear me clearly?",
-"The main objective today is to review the current status and agree on the next steps.",
-"I'll keep the update short and focus on the most important points.",
-"At the moment, the team is progressing as planned.",
-"We have one open issue that needs attention.",
-"The main risk is related to timing and dependency on another team.",
-"Could you clarify what you mean by that?",
-"Sorry to interrupt. Can I add one point?",
-"From my point of view, we should focus on the highest priority first.",
-"I agree with the general direction, but I have one concern.",
-"Can we confirm who owns this action?",
-"Could we agree on a target date?",
-"I'll check with my team and come back to you.",
-"We need to understand the impact before we make a decision.",
-"Let's separate the urgent issue from the longer-term improvement.",
-"Is there anything blocking the team right now?",
-"The client expects an update by the end of the week.",
-"We may need to adjust the plan if the dependency is delayed.",
-"Let's make sure we all have the same understanding.",
-"I'd like to summarize what we have agreed.",
-"The next step is to confirm the owner and the deadline.",
-"Please let me know if I have missed anything.",
-"Thanks everyone. I think we have a clear way forward."
+const recurring=[
+"Could you say that again, please?",
+"Let me check that I understood correctly."
 ];
 
-const role=[
+const daily=[
+{m:[
 "I'm a Delivery Lead working in public sector and healthcare.",
 "I currently manage a team of eleven people.",
-"My role is to support the team, remove blockers and improve delivery performance.",
-"I often join calls with colleagues and clients in the UK and the US."
-];
-
-const uk=[
-"Right, shall we get started? I think the main thing today is to understand where we are and what still needs to be done.",
-"From our side, the work is moving forward, although there are a couple of points we need to clarify before Friday.",
-"If anything changes, please flag it as early as possible so that we can adjust the plan.",
-"Before we wrap up, let's confirm the actions, the owners and the dates, just to make sure we're all aligned.",
-"If you're not sure about a point, just say so. Asking for clarification is completely normal in an international meeting.",
-"We can take the detail offline if necessary, but for now let's agree on the decision we need from this call."
-];
-
-const us=[
-"Okay everyone, let's get started. I want to make sure we're clear on the goal for today's call.",
-"The team is making good progress, but there's one dependency that could affect the timeline.",
-"If you have a concern, please bring it up. It's better to discuss it now than discover it later in the project.",
-"Before we finish, let's recap the decisions and make sure every action has an owner and a due date.",
-"Here's the bottom line: we need a clear owner, a realistic timeline, and early visibility of any risk.",
-"If something isn't clear, jump in and ask. That's better than leaving the call with the wrong understanding."
+"My role is to support the team and remove blockers.",
+"My background is mainly in project and delivery management.",
+"I work with colleagues and clients in different countries.",
+"I try to keep communication simple, practical and focused."
+],e:[
+"I lead delivery activities for public sector and healthcare projects.",
+"I am responsible for helping my team work effectively.",
+"A big part of my job is understanding problems early.",
+"I also coordinate with people outside my immediate team.",
+"When I introduce myself, I keep the message short and clear."
+]},
+{m:[
+"Good morning everyone. Thanks for joining.",
+"Shall we get started?",
+"The main objective today is to review the current situation.",
+"I'd like to keep the meeting focused on the key points.",
+"I'll start with a short update and then we can discuss questions.",
+"At the end, I'd like to confirm the actions and the owners."
+],e:[
+"Thanks everyone for making the time today.",
+"Let's begin with the most important point.",
+"I'd like us to leave this call with a clear decision.",
+"We can discuss the detail after the main update.",
+"Before we finish, let's make sure the next steps are clear."
+]},
+{m:[
+"Today I'd like to cover three main points.",
+"First, we'll review progress since the last meeting.",
+"Second, we'll look at the open issues.",
+"Finally, we'll agree on the next steps.",
+"Is there anything else we should add to the agenda?",
+"We don't need to solve every detail today."
+],e:[
+"Let's start by confirming what we need from this meeting.",
+"The first item is progress, followed by risks and actions.",
+"If there is time, we can discuss the lower-priority points.",
+"I suggest we keep technical detail for a separate call.",
+"Does this agenda work for everyone?"
+]},
+{m:[
+"Overall, the project is moving forward as planned.",
+"The team completed most of the activities scheduled for this week.",
+"We still have two items in progress.",
+"One task is slightly behind schedule, but the impact is limited.",
+"There are no major blockers at the moment.",
+"I'll send a written update after the call."
+],e:[
+"Progress is generally good, although one item needs attention.",
+"Most of the planned work is now complete.",
+"The remaining activity should finish soon.",
+"We are watching one small delay, but delivery is still under control.",
+"I'll confirm the final status once the team completes the last checks."
+]},
+{m:[
+"Our first priority is to protect the delivery date.",
+"The second priority is to remove the blocker affecting the team.",
+"Some activities can wait until next week.",
+"We should focus our effort where the business impact is highest.",
+"Can we agree which item comes first?",
+"I suggest we finish the critical work before starting anything new."
+],e:[
+"We need to be clear about what is truly urgent.",
+"The most important task is the one that protects the overall plan.",
+"Lower-value work can be moved if capacity is limited.",
+"Let's agree on one priority rather than trying to do everything.",
+"Once the critical item is stable, we can move to the next one."
+]},
+{m:[
+"Sorry, could you repeat the last point?",
+"Could you explain that in a different way?",
+"When you say delayed, do you mean one day or one week?",
+"I want to make sure I understand the impact correctly.",
+"Could you give me a practical example?",
+"Sorry, I didn't catch the name of the system."
+],e:[
+"Can I check one thing before we continue?",
+"I'm not sure I understood the last sentence.",
+"Could you go over that point once more?",
+"Just to confirm, are you talking about the current release?",
+"Let me repeat what I heard so we can check my understanding."
+]},
+{m:[
+"Sorry to interrupt. Can I add one point?",
+"Can I come in here for a moment?",
+"I agree with the general direction, but I have one concern.",
+"Before we move on, I'd like to clarify something.",
+"Could I quickly respond to that point?",
+"I'll be brief, but I think this is important."
+],e:[
+"Can I jump in for just a second?",
+"There's one point I'd like to add before we continue.",
+"I understand your view, and I'd like to offer another perspective.",
+"May I clarify one detail before we close this topic?",
+"I don't want to interrupt the flow, but this may affect the decision."
+]},
+{m:[
+"We need to complete this activity by Friday.",
+"The current target date is the end of the month.",
+"The delay is about two working days.",
+"Can we move this task forward?",
+"Is the deadline still realistic?",
+"If we miss this date, the next activity will also be delayed."
+],e:[
+"We should check whether the current date is still achievable.",
+"The team may need one more day to complete the work safely.",
+"A small delay here could affect the following milestone.",
+"Can we confirm the latest acceptable completion date?",
+"I'd rather agree a realistic date now than miss an unrealistic one later."
+]},
+{m:[
+"We have one open issue that needs attention.",
+"The main risk is related to timing.",
+"This issue could affect the delivery date.",
+"We have a mitigation plan, but we need to monitor it closely.",
+"The impact is currently medium, not critical.",
+"I'd like to review this risk again tomorrow."
+],e:[
+"One risk has become more visible since the last update.",
+"It is not blocking us yet, but it could become a problem.",
+"We already have an action to reduce the impact.",
+"The key is to identify any change early.",
+"If the situation gets worse, we may need to escalate."
+]},
+{m:[
+"This task depends on input from another team.",
+"We cannot complete the activity until we receive that information.",
+"The dependency is external to our team.",
+"Do we know when the other team will respond?",
+"We need a backup plan in case the input is late.",
+"I'd like to make the dependency visible in the plan."
+],e:[
+"Our timeline is linked to work owned by another group.",
+"We can continue with some activities, but not all of them.",
+"The main question is when the external input will be available.",
+"Let's agree who will follow up with the other team.",
+"If the dependency moves, we need to update our plan quickly."
+]},
+{m:[
+"The team is currently working at full capacity.",
+"We have more requests than available time.",
+"We need to protect the team from too many parallel activities.",
+"One person is supporting several workstreams at the same time.",
+"Can we move a lower-priority task to next week?",
+"I want to keep the workload sustainable."
+],e:[
+"Capacity is becoming a constraint for the team.",
+"We should avoid adding new work without removing something else.",
+"Several people are already handling multiple priorities.",
+"Let's check which activity can be postponed safely.",
+"A realistic workload will help us deliver better quality."
+]},
+{m:[
+"Can you take ownership of this action?",
+"Please check the issue and update us tomorrow.",
+"I'd like you to coordinate with the technical team.",
+"Can you prepare a short summary before the next meeting?",
+"Please let me know if you need support.",
+"Let's confirm the owner before we move on."
+],e:[
+"Who is the best person to take this forward?",
+"I'd like one clear owner for this action.",
+"Please come back with an update once you have the information.",
+"If you hit a blocker, raise it early rather than waiting.",
+"Let's make sure responsibility is clear to everyone."
+]},
+{m:[
+"The client has asked for an additional update.",
+"They would like more visibility on the delivery plan.",
+"We need to understand exactly what they are requesting.",
+"Some parts are already included in the current scope.",
+"Can we confirm the priority with the client?",
+"I'd like to manage expectations before we commit."
+],e:[
+"The request is reasonable, but we need to check the impact.",
+"We should separate what is already agreed from what is new.",
+"Let's ask the client what outcome they really need.",
+"We can offer options instead of promising immediately.",
+"Clear expectations now will avoid problems later."
+]},
+{m:[
+"This request changes the original scope.",
+"We need to assess the impact before accepting it.",
+"The change may require additional time.",
+"We should document what is different from the original plan.",
+"Can we confirm whether this is mandatory for the current release?",
+"I don't want the team to start before we have a clear decision."
+],e:[
+"The new requirement is outside the current agreed perimeter.",
+"Before we proceed, we should understand cost, time and dependency impacts.",
+"It may be possible to include the change, but not without adjustment.",
+"Let's record the request and agree how it will be evaluated.",
+"We need a clear approval before changing the plan."
+]},
+{m:[
+"I think we need to escalate this issue.",
+"The team cannot resolve it without additional support.",
+"We have already tried the available options.",
+"The impact is now affecting the delivery plan.",
+"I'd like management to help us remove the blocker.",
+"The escalation should be factual and focused on the decision needed."
+],e:[
+"This point now needs attention at a higher level.",
+"We should explain the impact, what we tried and what support we need.",
+"The goal of escalation is to unblock the work, not to assign blame.",
+"Let's be specific about the decision we are asking for.",
+"Once we have that decision, the team can move forward."
+]},
+{m:[
+"We need to make a decision today.",
+"There are two realistic options.",
+"Option one is faster but has more risk.",
+"Option two takes longer but gives us more confidence.",
+"My recommendation is based on delivery impact.",
+"Can we confirm the decision before the end of the call?"
+],e:[
+"We have enough information to choose a direction.",
+"Both options are possible, but they have different trade-offs.",
+"Let's focus on the effect of each choice on delivery.",
+"Once we agree, we should document the reason.",
+"A clear decision will help the team move without uncertainty."
+]},
+{m:[
+"Can we confirm who owns each action?",
+"This action is for my team.",
+"The client will provide the missing information.",
+"We need the update by Thursday.",
+"I'll track the actions after the meeting.",
+"Please tell me if any owner or date is incorrect."
+],e:[
+"Let's finish by checking every open action.",
+"Each item needs one owner and one target date.",
+"I will follow up on the actions assigned to my team.",
+"If a date changes, please update the group early.",
+"Clear ownership will make the next meeting much easier."
+]},
+{m:[
+"Let's review progress against the plan.",
+"We completed three of the five planned activities.",
+"One item is still in progress.",
+"The final activity has not started yet.",
+"We are slightly behind, but recovery is possible.",
+"I'd like to understand what we can do differently this week."
+],e:[
+"Compared with the plan, we have made good progress overall.",
+"A small amount of work has moved into the next period.",
+"The important point is whether we can recover without creating new risk.",
+"Let's look at the reason for the delay, not only the number.",
+"We should agree one practical action to improve progress."
+]},
+{m:[
+"The build is complete and testing has started.",
+"We have found two defects so far.",
+"Neither defect is currently blocking testing.",
+"We need clear acceptance criteria before final approval.",
+"Quality is more important than finishing one day earlier.",
+"Can the business team confirm the expected result?"
+],e:[
+"Testing is progressing, but we still need to validate the final behaviour.",
+"A few issues were identified and are being analysed.",
+"We should distinguish critical defects from minor improvements.",
+"Let's confirm what must be fixed before release.",
+"A shared definition of done will help avoid disagreement later."
+]},
+{m:[
+"Let's define the problem clearly before discussing solutions.",
+"What is happening, and when did it start?",
+"Do we know the root cause?",
+"We have three possible options.",
+"I suggest we test the simplest option first.",
+"If that doesn't work, we can move to the alternative."
+],e:[
+"Before choosing a solution, let's make sure we are solving the right problem.",
+"We should separate symptoms from the underlying cause.",
+"A quick fix may help now, but we also need a stable solution.",
+"Let's compare the options using impact, effort and risk.",
+"We can start small and adjust based on the result."
+]},
+{m:[
+"We may need to negotiate the delivery date.",
+"The current plan does not include the new request.",
+"If the scope increases, something else may need to move.",
+"I'd like to find a solution that works for both sides.",
+"Could we deliver the critical part first?",
+"We need to be realistic about time and capacity."
+],e:[
+"There is a trade-off between scope, time and available people.",
+"We can protect the date if we reduce what is included.",
+"Another option is to keep the scope and move the deadline.",
+"Let's identify which outcome matters most to the client.",
+"A good compromise should be clear and achievable."
+]},
+{m:[
+"I understand your concern.",
+"I see the situation differently, but I'd like to understand your view.",
+"Let's focus on the facts we both agree on.",
+"I don't think blaming the team will help us solve the issue.",
+"We need a constructive way forward.",
+"Can we agree on the next practical step?"
+],e:[
+"We may not agree on every point, and that's okay.",
+"I'd like us to separate the problem from the people involved.",
+"Let's listen to the concern before responding.",
+"We can disagree while still keeping the conversation professional.",
+"The objective is to leave with an action, not with more tension."
+]},
+{m:[
+"Delivery performance improved this month.",
+"We completed eighty percent of the planned activities.",
+"The average response time is lower than last month.",
+"One metric is still below target.",
+"The trend is positive, but we need more data.",
+"I'd like to focus on what the numbers tell us about delivery."
+],e:[
+"The figures show improvement in several areas.",
+"We should look at the trend, not only a single number.",
+"One measure still needs attention.",
+"Let's compare the result with the agreed target.",
+"The data is useful when it helps us decide what to do next."
+]},
+{m:[
+"Before we finish, I'd like to summarize the next steps.",
+"My team will complete the analysis.",
+"The client will confirm the requirement.",
+"We will meet again on Friday.",
+"I'll send the action list after this call.",
+"Is everyone clear on what happens next?"
+],e:[
+"Let's close with a quick recap of the agreed actions.",
+"We now know who owns each item.",
+"The next checkpoint is already clear.",
+"I'll share a short written summary so nothing is lost.",
+"If anything changes before the next meeting, please flag it early."
+]},
+{m:[
+"Our team works across different locations and time zones.",
+"We need communication that is clear even when people are not online together.",
+"Important decisions should not stay only in chat messages.",
+"We use calls for discussion and written notes for confirmation.",
+"Please share blockers early so remote colleagues can react.",
+"Good remote collaboration depends on visibility and trust."
+],e:[
+"Distributed teams need more deliberate communication.",
+"We cannot assume everyone heard the same conversation.",
+"Short written summaries help people in other time zones.",
+"Meetings should be used for decisions, not for every small update.",
+"Clear ownership is especially important when the team is remote."
+]},
+{m:[
+"Different stakeholders have different priorities.",
+"We need to understand what each group needs.",
+"Not every stakeholder requires the same level of detail.",
+"Our goal is to create a shared view of the situation.",
+"Can we agree on the key message before the next meeting?",
+"Alignment now will reduce confusion later."
+],e:[
+"Some people are focused on delivery, while others care more about cost or risk.",
+"We should tailor the message without changing the facts.",
+"A shared understanding is more important than perfect agreement.",
+"Let's identify where the real difference of opinion is.",
+"Once the key point is aligned, execution becomes easier."
+]},
+{m:[
+"I'll start with the overall delivery status.",
+"We are on track in three areas and watching one risk.",
+"The main decision today concerns the release date.",
+"The team has a mitigation plan in place.",
+"We need executive support on one external dependency.",
+"I'll finish with the actions that require management attention."
+],e:[
+"For the steering group, we should focus on status, risk and decisions.",
+"Senior stakeholders need the key message, not every technical detail.",
+"We should explain what has changed since the last review.",
+"Any request for support should be specific.",
+"The update should end with a clear view of confidence and next steps."
+]},
+{m:[
+"We remain confident in the current delivery plan.",
+"The main milestones are still achievable.",
+"There are risks, but they are understood and being managed.",
+"The team has clear priorities for the next two weeks.",
+"We are monitoring dependencies closely.",
+"If the situation changes, we will communicate it early."
+],e:[
+"Delivery confidence comes from evidence, not optimism.",
+"We should be clear about what is stable and what still needs attention.",
+"Known risks are easier to manage when owners and actions are defined.",
+"The plan remains credible as long as the current assumptions hold.",
+"We will keep reviewing those assumptions as the work progresses."
+]},
+{m:[
+"Good morning. I'll give you a complete project update.",
+"Overall status is amber because of one schedule risk.",
+"The team completed the planned development work.",
+"Testing is progressing and no critical defects are open.",
+"We are waiting for one external dependency.",
+"The current target date remains achievable.",
+"We have actions in place to protect the timeline.",
+"I'll finish by confirming the decisions we need today."
+],e:[
+"The project is progressing, with one area that needs close attention.",
+"Most workstreams are on plan and the team understands the priorities.",
+"The remaining uncertainty comes from an external dependency.",
+"We have a fallback option if the dependency is delayed.",
+"The main decision is whether to activate that fallback this week."
+]},
+{m:[
+"Good morning everyone. Let's get started.",
+"First, I'll give a short status update.",
+"Then I'd like to hear any concerns from the client side.",
+"After that, we'll review risks and dependencies.",
+"We have one decision to make about timing.",
+"I may ask for clarification if I miss a point.",
+"Before we finish, we'll confirm actions and owners.",
+"Thanks everyone. Let's move to the first item."
+],e:[
+"Thanks for joining. Let's use this call to reach clear outcomes.",
+"The overall status is stable, but one issue needs discussion.",
+"I'd like to hear both the technical and business views.",
+"If we disagree, let's focus on the impact and the available options.",
+"At the end, we'll recap the decision, owner and date.",
+"This is a full meeting practice, so keep listening even if you miss some words."
+]}
 ];
 
 let day=Math.max(1,Math.min(30,Number(localStorage.getItem("ed_day")||1)));
 let completed=JSON.parse(localStorage.getItem("ed_completed")||"{}");
 let mode="morning",blocks=[],blockIndex=0,lineIndex=0,elapsed=0,blockElapsed=0;
-let running=false,paused=false,timer=null,utterance=null,wakeLock=null,voices=[];
+let running=false,paused=false,timer=null,utterance=null,wakeLock=null,voices=[],extraMode=false;
 
 function key(){return "d"+day}
+function dateKey(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
 function rate(){return day<=7?.86:day<=15?.91:day<=23?.96:1.0}
 function level(){return day<=10?"A2":day<=22?"A2+":"A2 → B1"}
+
+function advanceIfNeeded(){
+  const c=completed[key()]||{};
+  if(c.morning&&c.evening&&c.completedDate&&c.completedDate!==dateKey()&&day<30){
+    day++;
+    localStorage.setItem("ed_day",String(day));
+  }
+}
 
 function chooseMode(){
   const c=completed[key()]||{};
@@ -213,43 +605,37 @@ function chooseMode(){
   return h<14?"morning":"evening";
 }
 
-function enrich(arr){
-  const t=topics[day-1];
+function morningLines(){return [...daily[day-1].m,...recurring]}
+function eveningLines(){return [...daily[day-1].e,daily[day-1].m[1],daily[day-1].m[4],...recurring]}
+
+function sessionBlocks(){
+  const lines=mode==="morning"?morningLines():eveningLines();
+  const a=lines.filter((_,i)=>i%2===0),b=lines.filter((_,i)=>i%2===1);
   return [
-    ...arr,
-    "Today's topic is "+t[0]+".",
-    "Listen for the key words. You do not need to understand every word.",
-    "Could you say that again, please?",
-    "Would you mind speaking a little more slowly?",
-    "Let me check that I understood correctly.",
-    "So, if I understand you correctly, this is the main priority."
+    {name:mode==="morning"?"Business English":"Smart review",locale:"en-GB",mins:15,lines:a},
+    {name:mode==="morning"?"Business English":"Smart review",locale:"en-US",mins:15,lines:b},
+    {name:"UK listening",locale:"en-GB",mins:15,lines:[...lines].reverse()},
+    {name:"US listening",locale:"en-US",mins:15,lines:lines}
   ];
 }
 
-function sessionBlocks(){
-  const business=enrich([...role,...core]);
-  if(mode==="morning"){
-    return [
-      {name:"Business English",locale:"en-GB",mins:18,lines:business},
-      {name:"Business English",locale:"en-US",mins:18,lines:business.slice().reverse()},
-      {name:"UK listening",locale:"en-GB",mins:12,lines:enrich(uk)},
-      {name:"US listening",locale:"en-US",mins:12,lines:enrich(us)}
-    ];
-  }
+function extraBlocks(){
+  const all=[...morningLines(),...eveningLines()];
   return [
-    {name:"Review",locale:"en-GB",mins:15,lines:enrich([...core.slice(0,14),...uk])},
-    {name:"Review",locale:"en-US",mins:15,lines:enrich([...core.slice(10),...us])},
-    {name:"UK listening",locale:"en-GB",mins:15,lines:enrich(uk)},
-    {name:"US listening",locale:"en-US",mins:15,lines:enrich(us)}
+    {name:"Fuori orario",locale:"en-GB",mins:12,lines:all.filter((_,i)=>i%2===0)},
+    {name:"Fuori orario",locale:"en-US",mins:12,lines:all.filter((_,i)=>i%2===1)},
+    {name:"Fuori orario",locale:"en-GB",mins:12,lines:[...all].reverse()},
+    {name:"Fuori orario",locale:"en-US",mins:12,lines:all}
   ];
 }
 
 function render(){
+  advanceIfNeeded();
   mode=chooseMode();
   const t=topics[day-1],c=completed[key()]||{};
   document.getElementById("dayLabel").textContent="GIORNO "+day+" DI 30";
   document.getElementById("topic").textContent=t[0];
-  document.getElementById("focus").textContent=t[1]+". Ascolta e basta: non devi capire tutto.";
+  document.getElementById("focus").textContent=t[1]+". Ogni giorno trovi frasi nuove, con un piccolo ripasso delle più importanti.";
   document.getElementById("sessionTitle").textContent=(mode==="morning"?"☀️ Sessione mattina":"🌙 Sessione sera")+" · 60 min";
   document.getElementById("todayStat").textContent=(Number(!!c.morning)+Number(!!c.evening))+"/2";
   document.getElementById("levelStat").textContent=level();
@@ -275,21 +661,41 @@ function voiceFor(locale){
   return same[0]||null;
 }
 
-async function startSession(){
-  if(!("speechSynthesis" in window)){alert("Apri la PWA con Safari su iPhone/iPad o Chrome.");return}
+async function preparePlayer(){
+  if(!("speechSynthesis" in window)){alert("Apri la PWA con Safari su iPhone/iPad o Chrome.");return false}
   await loadVoices();
-  mode=chooseMode();blocks=sessionBlocks();blockIndex=0;lineIndex=0;elapsed=0;blockElapsed=0;running=true;paused=false;
+  blockIndex=0;lineIndex=0;elapsed=0;blockElapsed=0;running=true;paused=false;
   speechSynthesis.cancel();
   document.getElementById("player").classList.add("open");
   document.getElementById("playing").style.display="block";
   document.getElementById("done").classList.remove("show");
-  document.getElementById("playTopic").textContent=topics[day-1][0];
+  document.getElementById("playTopic").textContent=extraMode?"Fuori orario · "+topics[day-1][0]:topics[day-1][0];
   document.getElementById("pauseBtn").textContent="Ⅱ";
+  document.getElementById("closeBtn").textContent=extraMode?"■ Stop":"✕ Chiudi";
+  document.getElementById("clockCaption").textContent=extraMode?"TEMPO ASCOLTATO":"TEMPO RIMANENTE";
+  document.getElementById("bottomText").textContent=extraMode
+    ?"Ascolto libero: fermalo quando vuoi. Non modifica il programma."
+    :"Non tradurre. Se perdi una frase, continua ad ascoltare.";
   if("wakeLock" in navigator){try{wakeLock=await navigator.wakeLock.request("screen")}catch(e){}}
   updatePlayer();
   clearInterval(timer);
   timer=setInterval(()=>{if(running&&!paused){elapsed++;blockElapsed++;updateClock()}},1000);
   setTimeout(speak,180);
+  return true;
+}
+
+async function startSession(){
+  extraMode=false;
+  mode=chooseMode();
+  blocks=sessionBlocks();
+  await preparePlayer();
+}
+
+async function startExtra(){
+  extraMode=true;
+  mode="extra";
+  blocks=extraBlocks();
+  await preparePlayer();
 }
 
 function speak(){
@@ -303,9 +709,15 @@ function speak(){
   utterance.onend=()=>{
     if(!running||paused)return;
     if(blockElapsed>=b.mins*60){
-      blockIndex++;blockElapsed=0;lineIndex=0;
-      if(blockIndex>=blocks.length){complete();return}
-      updatePlayer();
+      blockElapsed=0;lineIndex=0;
+      if(extraMode){
+        blockIndex=(blockIndex+1)%blocks.length;
+        updatePlayer();
+      }else{
+        blockIndex++;
+        if(blockIndex>=blocks.length){complete();return}
+        updatePlayer();
+      }
     }else{lineIndex=(lineIndex+1)%b.lines.length}
     setTimeout(speak,120);
   };
@@ -320,7 +732,7 @@ function updatePlayer(){
   updateClock();
   try{
     if("mediaSession" in navigator){
-      navigator.mediaSession.metadata=new MediaMetadata({title:topics[day-1][0],artist:"English Drive",album:mode==="morning"?"Morning":"Evening"});
+      navigator.mediaSession.metadata=new MediaMetadata({title:extraMode?"Fuori orario":topics[day-1][0],artist:"English Drive",album:extraMode?"Free listening":mode==="morning"?"Morning":"Evening"});
       navigator.mediaSession.setActionHandler("play",()=>{if(paused)togglePause()});
       navigator.mediaSession.setActionHandler("pause",()=>{if(!paused)togglePause()});
     }
@@ -328,8 +740,16 @@ function updatePlayer(){
 }
 
 function updateClock(){
-  const remain=Math.max(0,3600-elapsed),m=Math.floor(remain/60),s=remain%60,p=Math.min(100,elapsed/36);
-  document.getElementById("clock").textContent=String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+  let p;
+  if(extraMode){
+    const m=Math.floor(elapsed/60),s=elapsed%60;
+    document.getElementById("clock").textContent=String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+    p=((elapsed%3600)/36);
+  }else{
+    const remain=Math.max(0,3600-elapsed),m=Math.floor(remain/60),s=remain%60;
+    document.getElementById("clock").textContent=String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+    p=Math.min(100,elapsed/36);
+  }
   document.getElementById("ring").style.setProperty("--p",p+"%");
   document.getElementById("progress").style.width=p+"%";
 }
@@ -343,26 +763,29 @@ function togglePause(){
 function complete(){
   running=false;paused=false;clearInterval(timer);speechSynthesis.cancel();
   if(wakeLock){try{wakeLock.release()}catch(e){}wakeLock=null}
+  if(extraMode){closePlayer();return}
   completed[key()]=completed[key()]||{};
   completed[key()][mode]=true;
+  if(completed[key()].morning&&completed[key()].evening)completed[key()].completedDate=dateKey();
   localStorage.setItem("ed_completed",JSON.stringify(completed));
   document.getElementById("playing").style.display="none";
   document.getElementById("done").classList.add("show");
   document.getElementById("doneText").textContent=mode==="morning"
-    ?"Mattina completata. La sera la PWA riprenderà automaticamente il ripasso e cambierà ancora tra UK e USA."
-    :"Sera completata. Hai fatto il tuo allenamento d'ascolto di oggi.";
+    ?"Mattina completata. La sera sentirai lo stesso tema con formulazioni diverse e un piccolo ripasso."
+    :"Sera completata. Il prossimo giorno di studio passerà automaticamente al tema successivo.";
 }
 
 function closePlayer(){
   running=false;paused=false;clearInterval(timer);speechSynthesis.cancel();
   if(wakeLock){try{wakeLock.release()}catch(e){}wakeLock=null}
   document.getElementById("player").classList.remove("open");
+  extraMode=false;
+  render();
 }
 
 function finish(){
-  const c=completed[key()]||{};
-  if(c.morning&&c.evening&&day<30){day++;localStorage.setItem("ed_day",String(day))}
   document.getElementById("player").classList.remove("open");
+  extraMode=false;
   render();
 }
 
