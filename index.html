@@ -82,7 +82,7 @@ h1{font-size:38px;line-height:1.02;letter-spacing:-.05em;margin:10px 0 8px}
       <div class="stat"><b id="levelStat">A2</b><span>LIVELLO</span></div>
     </div>
   </section>
-  <div class="note">Sarah ed Emma si ritrovano, fanno due chiacchiere e poi passano al progetto. 12 casi simulati nella PA e sanità, ciascuno con una riunione e un follow-up. Per ora tieni lo schermo acceso. Versione 9.</div>
+  <div class="note">Sarah ed Emma si ritrovano, fanno due chiacchiere e poi passano al progetto. 12 casi simulati nella PA e sanità, ciascuno con una riunione e un follow-up. Per ora tieni lo schermo acceso. Versione 10.</div>
 </div>
 
 <div class="player" id="player">
@@ -124,7 +124,7 @@ let day=Math.max(1,Math.min(30,Number(localStorage.getItem("ed_day")||1)));
 let completed=JSON.parse(localStorage.getItem("ed_completed")||"{}");
 let mode="morning",blocks=[],blockIndex=0,lineIndex=0,elapsed=0,blockElapsed=0;
 let running=false,paused=false,timer=null,utterance=null,wakeLock=null,voices=[],extraMode=false;
-let speechGeneration=0,nextSpeech=null,starting=false;
+let speechGeneration=0,nextSpeech=null,starting=false,voiceStarted=false,startWatchdog=null;
 let playbackRate=Number(localStorage.getItem("ed_speed")||1.0);
 
 function key(){return "d"+day}
@@ -192,12 +192,19 @@ function voiceFor(locale){
   const female=voices.filter(v=>/^en[-_]/i.test(v.lang)&&femaleNames.test(v.name));
   return female.find(v=>v.lang.toLowerCase()===locale.toLowerCase())||female[0]||null;
 }
-function cancelSpeech(){speechGeneration++;clearTimeout(nextSpeech);nextSpeech=null;speechSynthesis.cancel()}
+function requestLessonAudio(){try{if(navigator.audioSession)navigator.audioSession.type="playback"}catch(e){}}
+function releaseLessonAudio(){try{if(navigator.audioSession)navigator.audioSession.type="auto"}catch(e){}}
+function cancelSpeech(){speechGeneration++;clearTimeout(nextSpeech);clearTimeout(startWatchdog);voiceStarted=false;nextSpeech=null;speechSynthesis.cancel()}
+function audioFailed(){
+  paused=true;cancelSpeech();releaseLessonAudio();
+  document.getElementById("pauseBtn").textContent="▶";
+  document.getElementById("bottomText").textContent="La voce non è partita. Metti in pausa la musica e premi ▶ per riprovare.";
+}
 function scheduleSpeech(delay=200){clearTimeout(nextSpeech);const generation=speechGeneration;nextSpeech=setTimeout(()=>{nextSpeech=null;if(generation===speechGeneration)speak()},delay)}
 
-async function preparePlayer(){
+function preparePlayer(){
   if(!("speechSynthesis" in window)){alert("Apri la PWA con Safari su iPhone/iPad o Chrome.");return false}
-  await loadVoices();
+  voices=speechSynthesis.getVoices();
   if(!voiceFor("en-GB")){alert("Non trovo una voce inglese femminile sul dispositivo. Su iPhone aggiungi Samantha o Serena nelle impostazioni delle voci di Accessibilità, poi riapri la PWA.");return false}
   blockIndex=0;lineIndex=0;elapsed=0;blockElapsed=0;running=true;paused=false;
   cancelSpeech();
@@ -211,28 +218,31 @@ async function preparePlayer(){
   document.getElementById("bottomText").textContent=extraMode
     ?"Ascolto libero: fermalo quando vuoi. Non modifica il programma."
     :"Segui il problema, la decisione e chi farà cosa. La riunione termina senza tagliare il discorso.";
-  if("wakeLock" in navigator){try{wakeLock=await navigator.wakeLock.request("screen")}catch(e){}}
+  requestLessonAudio();
+  // Speak inside the tap handler: no await or timer before the first utterance.
+  speak();
+  if("wakeLock" in navigator){navigator.wakeLock.request("screen").then(lock=>{if(running)wakeLock=lock;else lock.release()}).catch(()=>{})}
   updatePlayer();
   clearInterval(timer);
-  timer=setInterval(()=>{if(running&&!paused){elapsed++;blockElapsed++;updateClock()}},1000);
-  scheduleSpeech(180);
+  timer=setInterval(()=>{if(running&&!paused&&voiceStarted){elapsed++;blockElapsed++;updateClock()}},1000);
+
   return true;
 }
 
-async function startSession(){
+function startSession(){
   if(starting||running)return;starting=true;
   extraMode=false;
   mode=chooseMode();
   blocks=sessionBlocks();
-  try{await preparePlayer()}finally{starting=false}
+  try{preparePlayer()}finally{starting=false}
 }
 
-async function startExtra(){
+function startExtra(){
   if(starting||running)return;starting=true;
   extraMode=true;
   mode="extra";
   blocks=extraBlocks();
-  try{await preparePlayer()}finally{starting=false}
+  try{preparePlayer()}finally{starting=false}
 }
 
 function speak(){
@@ -248,9 +258,15 @@ function speak(){
   document.getElementById('spokenText').textContent=line.text;
   document.getElementById('voiceLabel').textContent=(v?.lang==='en-GB'?'🇬🇧 UK':v?.lang==='en-US'?'🇺🇸 USA':'EN')+' · femminile';
   let settled=false;
+  voiceStarted=false;
+  current.onstart=()=>{
+    if(generation!==speechGeneration||!running||paused)return;
+    clearTimeout(startWatchdog);voiceStarted=true;
+    document.getElementById("bottomText").textContent="Ascolto in corso · Segui la conversazione.";
+  };
   const advance=()=>{
     if(settled||generation!==speechGeneration||!running)return;
-    settled=true;
+    settled=true;clearTimeout(startWatchdog);voiceStarted=false;
     lineIndex++;
     // Finish the conversation in order; never reverse turns or restart after four lines.
     if(lineIndex>=b.lines.length){
@@ -261,8 +277,10 @@ function speak(){
     if(!paused)scheduleSpeech(lineIndex===0?1600:650);
   };
   current.onend=advance;
-  current.onerror=()=>{if(generation!==speechGeneration||!running)return;settled=true;paused=true;document.getElementById('pauseBtn').textContent='▶';document.getElementById('bottomText').textContent='Voce interrotta. Premi ▶ per riprendere.'};
-  speechSynthesis.speak(current);
+  current.onerror=()=>{if(generation!==speechGeneration||!running)return;settled=true;audioFailed()};
+  startWatchdog=setTimeout(()=>{if(generation===speechGeneration&&running&&!paused&&!voiceStarted)audioFailed()},6000);
+  try{speechSynthesis.speak(current)}catch(e){audioFailed()}
+
 }
 
 function updatePlayer(){
@@ -297,12 +315,18 @@ function updateClock(){
 
 function togglePause(){
   if(!running)return;
-  if(paused){paused=false;document.getElementById("pauseBtn").textContent="Ⅱ";speechSynthesis.resume();if(!speechSynthesis.speaking)scheduleSpeech(100)}
-  else{paused=true;document.getElementById("pauseBtn").textContent="▶";speechSynthesis.pause()}
+  if(paused){
+    cancelSpeech();paused=false;requestLessonAudio();
+    document.getElementById("pauseBtn").textContent="Ⅱ";
+    speechSynthesis.resume();speak();
+  }else{
+    paused=true;cancelSpeech();releaseLessonAudio();
+    document.getElementById("pauseBtn").textContent="▶";
+  }
 }
 
 function complete(){
-  running=false;paused=false;clearInterval(timer);cancelSpeech();
+  running=false;paused=false;clearInterval(timer);cancelSpeech();releaseLessonAudio();
   if(wakeLock){try{wakeLock.release()}catch(e){}wakeLock=null}
   if(extraMode){closePlayer();return}
   completed[key()]=completed[key()]||{};
@@ -317,7 +341,7 @@ function complete(){
 }
 
 function closePlayer(){
-  running=false;paused=false;clearInterval(timer);cancelSpeech();
+  running=false;paused=false;clearInterval(timer);cancelSpeech();releaseLessonAudio();
   if(wakeLock){try{wakeLock.release()}catch(e){}wakeLock=null}
   document.getElementById("player").classList.remove("open");
   extraMode=false;
@@ -332,6 +356,7 @@ function finish(){
 
 if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&running&&!paused&&!speechSynthesis.speaking)scheduleSpeech(200)});
+if("speechSynthesis" in window){loadVoices();speechSynthesis.addEventListener("voiceschanged",()=>{voices=speechSynthesis.getVoices()})}
 render();
 </script>
 </body>
