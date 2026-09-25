@@ -69,7 +69,7 @@ h1{font-size:38px;line-height:1.02;letter-spacing:-.05em;margin:10px 0 8px}
     <div class="sub" id="focus">Ascolta e basta. Non devi capire tutto.</div>
 
     <div class="session">
-      <div><span id="sessionTitle">☀️ Sessione mattina · 60 min</span><small>UK ↔ USA automatico</small></div>
+      <div><span id="sessionTitle">☀️ Sessione mattina · 60 min</span><small>Voce femminile · UK / USA</small></div>
       <div class="auto">AUTO</div>
     </div>
 
@@ -82,7 +82,7 @@ h1{font-size:38px;line-height:1.02;letter-spacing:-.05em;margin:10px 0 8px}
       <div class="stat"><b id="levelStat">A2</b><span>LIVELLO</span></div>
     </div>
   </section>
-  <div class="note">Premi START una volta. Da lì cambia da solo tra voce britannica e americana durante tutta l’ora.</div>
+  <div class="note">Voce femminile del dispositivo, con accenti UK e USA quando disponibili. Ascolto vario con ripassi distanziati. Per ora tieni lo schermo acceso. Versione 8.</div>
 </div>
 
 <div class="player" id="player">
@@ -586,6 +586,7 @@ let day=Math.max(1,Math.min(30,Number(localStorage.getItem("ed_day")||1)));
 let completed=JSON.parse(localStorage.getItem("ed_completed")||"{}");
 let mode="morning",blocks=[],blockIndex=0,lineIndex=0,elapsed=0,blockElapsed=0;
 let running=false,paused=false,timer=null,utterance=null,wakeLock=null,voices=[],extraMode=false;
+let speechGeneration=0,nextSpeech=null,starting=false;
 let playbackRate=Number(localStorage.getItem("ed_speed")||1.0);
 
 function key(){return "d"+day}
@@ -623,26 +624,26 @@ function chooseMode(){
 function morningLines(){return [...daily[day-1].m,...recurring]}
 function eveningLines(){return [...daily[day-1].e,daily[day-1].m[1],daily[day-1].m[4],...recurring]}
 
+function lessonLines(){
+  // Complete theme first, then varied meeting review. Never a four-line loop.
+  const focus=mode==='morning'?[...morningLines(),...eveningLines()]:[...eveningLines(),...morningLines()];
+  const review=[];
+  for(let offset=1;offset<daily.length;offset++){
+    const i=(day-1+offset)%daily.length;
+    review.push(...(mode==='morning'?daily[i].m:daily[i].e));
+  }
+  return [...new Set([...focus,...review])];
+}
 function sessionBlocks(){
-  const lines=mode==="morning"?morningLines():eveningLines();
-  const a=lines.filter((_,i)=>i%2===0),b=lines.filter((_,i)=>i%2===1);
+  const lines=lessonLines();
   return [
-    {name:mode==="morning"?"Business English":"Smart review",locale:"en-GB",mins:15,lines:a},
-    {name:mode==="morning"?"Business English":"Smart review",locale:"en-US",mins:15,lines:b},
-    {name:"UK listening",locale:"en-GB",mins:15,lines:[...lines].reverse()},
-    {name:"US listening",locale:"en-US",mins:15,lines:lines}
+    {name:'Tema del giorno e ascolto vario',locale:'en-GB',mins:15,lines},
+    {name:'Meeting practice',locale:'en-US',mins:15,lines:[...lines].reverse()},
+    {name:'UK listening',locale:'en-GB',mins:15,lines:[...lines.slice(40),...lines.slice(0,40)]},
+    {name:'US listening',locale:'en-US',mins:15,lines:[...lines.slice(80),...lines.slice(0,80)]}
   ];
 }
-
-function extraBlocks(){
-  const all=[...morningLines(),...eveningLines()];
-  return [
-    {name:"Fuori orario",locale:"en-GB",mins:12,lines:all.filter((_,i)=>i%2===0)},
-    {name:"Fuori orario",locale:"en-US",mins:12,lines:all.filter((_,i)=>i%2===1)},
-    {name:"Fuori orario",locale:"en-GB",mins:12,lines:[...all].reverse()},
-    {name:"Fuori orario",locale:"en-US",mins:12,lines:all}
-  ];
-}
+function extraBlocks(){return sessionBlocks().map(b=>({...b,name:'Fuori orario'}))}
 
 function render(){
   advanceIfNeeded();
@@ -650,10 +651,11 @@ function render(){
   const t=topics[day-1],c=completed[key()]||{};
   document.getElementById("dayLabel").textContent="GIORNO "+day+" DI 30";
   document.getElementById("topic").textContent=t[0];
-  document.getElementById("focus").textContent=t[1]+". Ogni giorno trovi frasi nuove, con un piccolo ripasso delle più importanti.";
+  document.getElementById("focus").textContent=t[1]+". Ogni giorno trovi frasi nuove, poi ascolto vario delle situazioni di lavoro.";
   document.getElementById("sessionTitle").textContent=(mode==="morning"?"☀️ Sessione mattina":"🌙 Sessione sera")+" · 60 min";
   document.getElementById("todayStat").textContent=(Number(!!c.morning)+Number(!!c.evening))+"/2";
   document.getElementById("levelStat").textContent=level();
+  renderSpeed();
 }
 
 function loadVoices(){
@@ -669,18 +671,19 @@ function loadVoices(){
 }
 
 function voiceFor(locale){
-  const exact=voices.filter(v=>String(v.lang||"").toLowerCase()===locale.toLowerCase());
-  const same=exact.length?exact:voices.filter(v=>String(v.lang||"").toLowerCase().startsWith(locale.slice(0,2).toLowerCase()));
-  const prefs=locale==="en-GB"?["Daniel","Serena","Martha","Google UK","Microsoft"]:["Samantha","Alex","Karen","Google US","Microsoft"];
-  for(const p of prefs){const found=same.find(v=>v.name.includes(p));if(found)return found}
-  return same[0]||null;
+  const femaleNames=/Serena|Martha|Sonia|Libby|Samantha|Allison|Ava|Susan|Victoria|Jenny|Aria|Michelle|Emma|Google UK English Female|Karen|Moira|Tessa/i;
+  const female=voices.filter(v=>/^en[-_]/i.test(v.lang)&&femaleNames.test(v.name));
+  return female.find(v=>v.lang.toLowerCase()===locale.toLowerCase())||female[0]||null;
 }
+function cancelSpeech(){speechGeneration++;clearTimeout(nextSpeech);nextSpeech=null;speechSynthesis.cancel()}
+function scheduleSpeech(delay=200){clearTimeout(nextSpeech);const generation=speechGeneration;nextSpeech=setTimeout(()=>{nextSpeech=null;if(generation===speechGeneration)speak()},delay)}
 
 async function preparePlayer(){
   if(!("speechSynthesis" in window)){alert("Apri la PWA con Safari su iPhone/iPad o Chrome.");return false}
   await loadVoices();
+  if(!voiceFor("en-GB")){alert("Non trovo una voce inglese femminile sul dispositivo. Su iPhone aggiungi Samantha o Serena nelle impostazioni delle voci di Accessibilità, poi riapri la PWA.");return false}
   blockIndex=0;lineIndex=0;elapsed=0;blockElapsed=0;running=true;paused=false;
-  speechSynthesis.cancel();
+  cancelSpeech();
   document.getElementById("player").classList.add("open");
   document.getElementById("playing").style.display="block";
   document.getElementById("done").classList.remove("show");
@@ -695,54 +698,55 @@ async function preparePlayer(){
   updatePlayer();
   clearInterval(timer);
   timer=setInterval(()=>{if(running&&!paused){elapsed++;blockElapsed++;updateClock()}},1000);
-  setTimeout(speak,180);
+  scheduleSpeech(180);
   return true;
 }
 
 async function startSession(){
+  if(starting||running)return;starting=true;
   extraMode=false;
   mode=chooseMode();
   blocks=sessionBlocks();
-  await preparePlayer();
+  try{await preparePlayer()}finally{starting=false}
 }
 
 async function startExtra(){
+  if(starting||running)return;starting=true;
   extraMode=true;
   mode="extra";
   blocks=extraBlocks();
-  await preparePlayer();
+  try{await preparePlayer()}finally{starting=false}
 }
 
 function speak(){
-  if(!running||paused)return;
+  if(!running||paused||speechSynthesis.speaking)return;
   const b=blocks[blockIndex];
   if(lineIndex>=b.lines.length)lineIndex=0;
-  utterance=new SpeechSynthesisUtterance(b.lines[lineIndex]);
-  utterance.lang=b.locale;
-  utterance.rate=rate();
-  const v=voiceFor(b.locale);if(v)utterance.voice=v;
-  utterance.onend=()=>{
-    if(!running||paused)return;
+  const generation=speechGeneration;
+  const current=new SpeechSynthesisUtterance(b.lines[lineIndex]);
+  utterance=current;current.lang=b.locale;current.rate=rate();
+  const v=voiceFor(b.locale);if(v){current.voice=v;current.lang=v.lang}
+  let settled=false;
+  const advance=()=>{
+    if(settled||generation!==speechGeneration||!running)return;
+    settled=true;
+    lineIndex=(lineIndex+1)%b.lines.length;
     if(blockElapsed>=b.mins*60){
-      blockElapsed=0;lineIndex=0;
-      if(extraMode){
-        blockIndex=(blockIndex+1)%blocks.length;
-        updatePlayer();
-      }else{
-        blockIndex++;
-        if(blockIndex>=blocks.length){complete();return}
-        updatePlayer();
-      }
-    }else{lineIndex=(lineIndex+1)%b.lines.length}
-    setTimeout(speak,120);
+      blockElapsed=0;lineIndex=0;blockIndex++;
+      if(blockIndex>=blocks.length){if(extraMode)blockIndex=0;else{complete();return}}
+      updatePlayer();
+    }
+    if(!paused)scheduleSpeech(450);
   };
-  utterance.onerror=()=>{if(running&&!paused){lineIndex=(lineIndex+1)%b.lines.length;setTimeout(speak,250)}};
-  speechSynthesis.speak(utterance);
+  current.onend=advance;
+  current.onerror=()=>{if(generation!==speechGeneration||!running)return;settled=true;paused=true;document.getElementById('pauseBtn').textContent='▶';document.getElementById('bottomText').textContent='Voce interrotta. Premi ▶ per riprendere.'};
+  speechSynthesis.speak(current);
 }
 
 function updatePlayer(){
   const b=blocks[blockIndex];
-  document.getElementById("voiceLabel").textContent=b.locale==="en-GB"?"🇬🇧 UK":"🇺🇸 USA";
+  const selected=voiceFor(b.locale);
+  document.getElementById("voiceLabel").textContent=(selected?.lang==="en-GB"?"🇬🇧 UK":selected?.lang==="en-US"?"🇺🇸 USA":"EN")+" · "+(selected?.name||"Voce femminile");
   document.getElementById("blockLabel").textContent=b.name+" · cambio accento automatico";
   updateClock();
   try{
@@ -771,12 +775,12 @@ function updateClock(){
 
 function togglePause(){
   if(!running)return;
-  if(paused){paused=false;document.getElementById("pauseBtn").textContent="Ⅱ";speechSynthesis.resume();if(!speechSynthesis.speaking)setTimeout(speak,100)}
+  if(paused){paused=false;document.getElementById("pauseBtn").textContent="Ⅱ";speechSynthesis.resume();if(!speechSynthesis.speaking)scheduleSpeech(100)}
   else{paused=true;document.getElementById("pauseBtn").textContent="▶";speechSynthesis.pause()}
 }
 
 function complete(){
-  running=false;paused=false;clearInterval(timer);speechSynthesis.cancel();
+  running=false;paused=false;clearInterval(timer);cancelSpeech();
   if(wakeLock){try{wakeLock.release()}catch(e){}wakeLock=null}
   if(extraMode){closePlayer();return}
   completed[key()]=completed[key()]||{};
@@ -791,7 +795,7 @@ function complete(){
 }
 
 function closePlayer(){
-  running=false;paused=false;clearInterval(timer);speechSynthesis.cancel();
+  running=false;paused=false;clearInterval(timer);cancelSpeech();
   if(wakeLock){try{wakeLock.release()}catch(e){}wakeLock=null}
   document.getElementById("player").classList.remove("open");
   extraMode=false;
@@ -805,7 +809,7 @@ function finish(){
 }
 
 if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
-document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&running&&!paused&&!speechSynthesis.speaking)setTimeout(speak,200)});
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&running&&!paused&&!speechSynthesis.speaking)scheduleSpeech(200)});
 render();
 </script>
 </body>
