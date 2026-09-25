@@ -1,5 +1,5 @@
-const CACHE="english-drive-v8";
-const ASSETS=["./","./index.html","./manifest.webmanifest","./icon.svg","./apple-touch-icon.png"];
+const CACHE="english-drive-v9";
+const ASSETS=["./","./index.html","./meetings.js?v=9","./manifest.webmanifest","./icon.svg","./apple-touch-icon.png"];
 self.addEventListener("install",e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)))});
 self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
 self.addEventListener("fetch",e=>{
