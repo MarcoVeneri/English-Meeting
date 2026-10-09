@@ -82,7 +82,7 @@ h1{font-size:38px;line-height:1.02;letter-spacing:-.05em;margin:10px 0 8px}
       <div class="stat"><b id="levelStat">A2</b><span>LIVELLO</span></div>
     </div>
   </section>
-  <div class="note">Sarah ed Emma si ritrovano, fanno due chiacchiere e poi passano al progetto. 12 casi simulati nella PA e sanità, ciascuno con una riunione e un follow-up. Per ora tieni lo schermo acceso. Versione 10.</div>
+  <div class="note">Sarah ed Emma si ritrovano, fanno due chiacchiere e poi passano al progetto. 12 casi simulati nella PA e sanità, ciascuno con una riunione e un follow-up. Puoi spegnere lo schermo: l’audio continua in background. Versione 12.</div>
 </div>
 
 <div class="player" id="player">
@@ -359,6 +359,6 @@ document.addEventListener("visibilitychange",()=>{if(document.visibilityState===
 if("speechSynthesis" in window){loadVoices();speechSynthesis.addEventListener("voiceschanged",()=>{voices=speechSynthesis.getVoices()})}
 render();
 </script>
-<script src="./audio-fix.js?v=11"></script>
+<script src="./audio-fix.js?v=12"></script>
 </body>
 </html>
