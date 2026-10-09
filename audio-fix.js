@@ -1,5 +1,4 @@
 (() => {
-  const femaleNames=/Serena|Martha|Sonia|Libby|Samantha|Allison|Ava|Susan|Victoria|Jenny|Aria|Michelle|Emma|Google UK English Female|Karen|Moira|Tessa|Siri|Flo|Sandy|Shelley/i;
 
   // iOS keeps an installed web app alive in the background only while a real
   // HTMLMediaElement owns the playback session. SpeechSynthesis alone is often
@@ -87,19 +86,39 @@
     return Array.isArray(voices)?voices:[];
   }
 
-  // Prefer a female voice, but never block playback just because iOS renamed
-  // or has not exposed one of the expected voices yet.
-  voiceFor=function(locale){
-    const all=refreshEnglishVoices();
+  // Select recognised natural English voices for each speaker. Prefer voice quality over
+  // accent, and never fall through to an arbitrary device/default voice.
+  const naturalFemale=/\b(Serena|Martha|Sonia|Libby|Samantha|Allison|Ava|Susan|Victoria|Jenny|Aria|Michelle|Emma|Karen|Moira|Tessa)\b|Google UK English Female/i;
+  const effectVoice=/Albert|Bad News|Bahh|Bells|Boing|Bubbles|Cellos|Good News|Hysterical|Jester|Organ|Trinoids|Whisper|Zarvox|Robot/i;
+  const naturalMale=/\b(Daniel|Oliver|Arthur|Thomas|Alex|Tom|Nathan|Aaron|Gordon|Guy|Ryan|Davis|Tony|Andrew|Brian)\b|Google UK English Male/i;
+  const speakerGender={Sarah:'female',Emma:'female',Narrator:'male'};
+  voiceFor=function(locale,speaker){
+    const gender=speakerGender[speaker]||'female';
+    const recognised=gender==='male'?naturalMale:naturalFemale;
     const wanted=String(locale||'en-GB').toLowerCase().replace('_','-');
-    const english=all.filter(v=>/^en[-_]/i.test(v.lang||''));
-    const exact=english.filter(v=>String(v.lang||'').toLowerCase().replace('_','-')===wanted);
-    return exact.find(v=>femaleNames.test(v.name||''))
-      || exact[0]
-      || english.find(v=>femaleNames.test(v.name||''))
-      || english[0]
-      || null;
+    const candidates=refreshEnglishVoices().filter(v=>
+      /^en[-_]/i.test(v.lang||'') &&
+      recognised.test(v.name||'') &&
+      !effectVoice.test(v.name||'')
+    );
+    const quality=v=>{
+      const label=(v.name||'')+' '+(v.voiceURI||'');
+      return (/premium|enhanced|neural|natural/i.test(label)?100:0)
+        +(String(v.lang||'').toLowerCase().replace('_','-')===wanted?10:0);
+    };
+    return candidates.sort((a,b)=>quality(b)-quality(a))[0]||null;
   };
+
+  function missingNaturalVoice(){
+    paused=true;
+    clearTimeout(startWatchdog);
+    voiceStarted=false;
+    releaseLessonAudio();
+    document.getElementById('pauseBtn').textContent='▶';
+    document.getElementById('voiceLabel').textContent='Voce naturale non disponibile';
+    document.getElementById('bottomText').textContent=
+      'La voce inglese richiesta non è disponibile. Premi ▶ per riprovare; se manca, scarica una voce inglese di qualità superiore (Daniel per il narratore, Samantha o Serena per Sarah ed Emma) nelle impostazioni delle voci di Accessibilità.';
+  }
 
   // iOS can expose voices late. Starting the player must not depend on the
   // voice list being populated at the exact instant the user taps START.
@@ -162,9 +181,12 @@
     utterance=current;
     current.lang=line.locale||'en-GB';
     current.rate=rate();
+    current.pitch=1;
+    current.volume=1;
 
-    const v=voiceFor(current.lang);
-    if(v){current.voice=v;current.lang=v.lang||current.lang;}
+    const v=voiceFor(current.lang,line.speaker);
+    if(!v){missingNaturalVoice();return;}
+    current.voice=v;current.lang=v.lang;
 
     document.getElementById('speakerLabel').textContent=line.speaker==='Narrator'
       ?'Scenario'
@@ -257,5 +279,5 @@
   }catch(e){}
 
   const note=document.querySelector('.note');
-  if(note) note.textContent=note.textContent.replace(/Versione\s+10\b/,'Versione 11');
+  if(note) note.textContent=note.textContent.replace(/Versione\s+\d+\b/,'Versione 13');
 })();
